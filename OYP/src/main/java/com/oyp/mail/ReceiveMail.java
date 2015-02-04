@@ -12,10 +12,6 @@ import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Store;
 
-/**
- *
- * @author rbe20795
- */
 public class ReceiveMail {
 
     private Properties props;
