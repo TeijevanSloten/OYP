@@ -1,8 +1,10 @@
 package com.oyp.mail;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.mail.NoSuchProviderException;
 import java.util.Properties;
+import javax.mail.Address;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -15,7 +17,8 @@ public class ReceiveMail {
     private Properties props;
     private Session session;
     private Store store;
-
+    private static ArrayList<Email> emails = new ArrayList<Email>();
+    
     public ReceiveMail() {
         props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");
@@ -33,8 +36,8 @@ public class ReceiveMail {
                 });
     }
 
-    public String showMessages() {
-        String messages = "";
+    public void retrieveMessages() {
+        emails.clear();
         try {
             store = session.getStore("imaps");
             store.connect("imap.gmail.com", "pipodekloun2003@gmail.com", "pipowachtwoord");
@@ -42,11 +45,12 @@ public class ReceiveMail {
             folder.open(Folder.READ_ONLY);//open folder only to read
             Message message[] = folder.getMessages();
             for (int i = 0; i < message.length; i++) {
-                messages += "-----------------------------------------------------------<br>";
-                messages += message[i].getFrom()[0] + "<br>";
-                messages += message[i].getSubject() + "<br>";
-                messages += message[i].getContent().toString() + "<br><br>";
-                messages += "-----------------------------------------------------------<br>";
+                emails.add(new Email(String.valueOf(message[i].getMessageNumber()),
+                        message[i].getFrom()[0].toString(),
+                        message[i].getSubject(), 
+                        message[i].getContent().toString(),
+                        message[i].getReceivedDate()
+                ));
             }
             folder.close(true);
             store.close();
@@ -57,6 +61,9 @@ public class ReceiveMail {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return messages;
+    }
+
+    public static ArrayList<Email> getEmails() {
+        return new ArrayList<>(emails);
     }
 }

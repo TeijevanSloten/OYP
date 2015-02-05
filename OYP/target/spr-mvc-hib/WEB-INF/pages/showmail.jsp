@@ -1,12 +1,10 @@
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>JSP Page</title>
-    </head>
-    <body>
-        <h1>Hello World!</h1><hr>
-        ${messages}
-    </body>
-</html>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ include file="base/header.jsp" %>
+<h1>Your Messages:</h1>
+<c:forEach var="email" items="${messages}">
+    <hr>
+    <a href="${email.getMessageNumber()}">
+        ${email.getSubject()} || ${email.getReceivedDate()}
+    </a>
+</c:forEach>
+<%@ include file="base/footer.jsp" %>

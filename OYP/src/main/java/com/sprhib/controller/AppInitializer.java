@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.sprhib.controller;
 
 import javax.servlet.ServletContext;
@@ -14,10 +9,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
-/**
- *
- * @author tsl20897
- */
 public class AppInitializer implements WebApplicationInitializer {
 
     @Override
