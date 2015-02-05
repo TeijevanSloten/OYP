@@ -20,7 +20,6 @@ public class ReceiveMail {
     private Properties props;
     private Session session;
     private static ArrayList<Email> emails = new ArrayList<>();
-    private Folder folder;
 
     public ReceiveMail() {
         setProperties();
@@ -58,10 +57,11 @@ public class ReceiveMail {
     public static ArrayList<Email> getEmails() {
         return new ArrayList<>(emails);
     }
-    
+
     private void connectAndOpenFolder() throws NoSuchProviderException, MessagingException {
         Store store = null;
         Folder folder = null;
+        emails.clear();
         try {
             store = session.getStore("imaps");
             store.connect("imap.gmail.com", "pipodekloun2003@gmail.com", "pipowachtwoord");
@@ -70,14 +70,13 @@ public class ReceiveMail {
             Message message[] = folder.getMessages();
 
             for (int i = 0; i < message.length; i++) {
-
                 emails.add(new Email(String.valueOf(message[i].getMessageNumber()),
                         message[i].getFrom()[0].toString(),
                         message[i].getSubject(),
                         message[i].getContent().toString(),
-                        message[i].getReceivedDate()
+                        message[i].getReceivedDate(),
+                        message[i]
                 ));
-
             }
         } catch (IOException ex) {
             Logger.getLogger(ReceiveMail.class.getName()).log(Level.SEVERE, null, ex);
@@ -86,7 +85,15 @@ public class ReceiveMail {
             store.close();
         }
     }
-
+    
+    public static Email getSpecificMail(int id){
+        for (Email email : emails) {
+            if(Integer.parseInt(email.getMessageNumber()) == id)
+                return email;
+        }
+        return null;
+    }
+    
     private String getAttachments(Message[] message, int i) throws IOException, MessagingException {
         String attachments = "";
 
@@ -98,7 +105,6 @@ public class ReceiveMail {
 
             attachments += ("Amount of attachments: " + multipart.getCount() + "<br>");
             attachments += ("Attachment names: " + "<br>");
-            //get and print the attachment names
             for (int j = 0; j < multipart.getCount(); j++) {
                 BodyPart bodyPart = multipart.getBodyPart(j);
                 if (bodyPart.getFileName() != null) {

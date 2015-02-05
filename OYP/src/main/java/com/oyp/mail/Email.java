@@ -1,6 +1,7 @@
 package com.oyp.mail;
 
 import java.util.Date;
+import javax.mail.Message;
 
 public class Email {
     private String messageNumber;
@@ -8,16 +9,26 @@ public class Email {
     private String subject;
     private String content;
     private Date receivedDate;
+    private Message message;
     
     public Email() {
     }
 
-    public Email(String messageNumber, String from, String subject, String content, Date receivedDate) {
+    public Message getMessage() {
+        return message;
+    }
+
+    public void setMessage(Message message) {
+        this.message = message;
+    }
+
+    public Email(String messageNumber, String from, String subject, String content, Date receivedDate, Message message) {
         this.messageNumber = messageNumber;
         this.from = from;
         this.subject = subject;
         this.content = content;
         this.receivedDate = receivedDate;
+        this.message = message;
     }
 
     public String getFrom() {
