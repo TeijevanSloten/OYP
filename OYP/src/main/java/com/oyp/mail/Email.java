@@ -1,16 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.oyp.mail;
 
 import java.util.Date;
 
-/**
- *
- * @author tsl20897
- */
 public class Email {
     private String messageNumber;
     private String from;
