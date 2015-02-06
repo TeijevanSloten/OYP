@@ -1,7 +1,15 @@
 package com.oyp.mail;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import javax.mail.Message;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.mail.BodyPart;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeBodyPart;
 
 public class Email {
     private String messageNumber;
@@ -10,6 +18,7 @@ public class Email {
     private String content;
     private Date receivedDate;
     private Message message;
+    private ArrayList<BodyPart> attachmentsList;
     
     public Email() {
     }
@@ -22,15 +31,45 @@ public class Email {
         this.message = message;
     }
 
-    public Email(String messageNumber, String from, String subject, String content, Date receivedDate, Message message) {
+    public Email(String messageNumber, String from, String subject, String content, Date receivedDate, Message message, ArrayList<BodyPart> attachments) {
         this.messageNumber = messageNumber;
         this.from = from;
         this.subject = subject;
         this.content = content;
         this.receivedDate = receivedDate;
         this.message = message;
+        this.attachmentsList = attachments;
     }
-
+    public ArrayList<String> getAttachmentsStringRepresentation(){
+        ArrayList<String> attachmentsFileNames = new ArrayList<>();
+        for (BodyPart attachment: attachmentsList)
+            try {
+                if (attachment.getFileName() != null) {
+                    attachmentsFileNames.add(attachment.getFileName());
+                    return attachmentsFileNames;
+                }
+            } catch (MessagingException ex) {
+                Logger.getLogger(Email.class.getName()).log(Level.SEVERE, null, ex);
+            }
+       return null; 
+    }
+    
+    public void saveAttachment(int attachmentNumber) throws Exception {
+        BodyPart bodyPart = attachmentsList.get(attachmentNumber);
+        String filename = bodyPart.getFileName();
+        File f = null;
+        try{
+            f = new File(filename);
+            while(f.exists()){
+                filename += 1;
+            }
+            ((MimeBodyPart)bodyPart).saveFile(f);
+        } catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+    
+    
     public String getFrom() {
         return from;
     }

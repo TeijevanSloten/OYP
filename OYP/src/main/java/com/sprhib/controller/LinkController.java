@@ -22,13 +22,6 @@ public class LinkController {
     public ModelAndView indexPage() {
         return new ModelAndView("home");
     }
-
-    @RequestMapping(value = "/showmail/{id}")
-    public ModelAndView getMailFunction(@PathVariable("id") int id) {
-        ModelAndView modelAndView = new ModelAndView("showmail");
-        modelAndView.addObject("mail", ReceiveMail.getSpecificMail(id));
-        return modelAndView;
-    }
     
     @RequestMapping(value = "/showmail")
     public ModelAndView showMail() {
@@ -36,7 +29,13 @@ public class LinkController {
         modelAndView.addObject("messages", ReceiveMail.getEmails());
         return modelAndView;
     }
-      
+     
+    @RequestMapping(value = "/showmail/{id}")
+    public ModelAndView getMailFunction(@PathVariable("id") int id) {
+        ModelAndView modelAndView = new ModelAndView("showmail");
+        modelAndView.addObject("mail", ReceiveMail.getSpecificMail(id));
+        return modelAndView;
+    } 
     
     @RequestMapping(value = "/retrievemail")
     public String retrieveMail() {
@@ -73,4 +72,6 @@ public class LinkController {
                 Integer.parseInt(request.getParameter("id"))));
         return modelAndView;
     }
+    
+
 }

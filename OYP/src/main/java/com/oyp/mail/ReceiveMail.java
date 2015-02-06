@@ -1,6 +1,9 @@
 package com.oyp.mail;
 
+import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import javax.mail.NoSuchProviderException;
 import java.util.Properties;
@@ -14,6 +17,7 @@ import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Store;
+import javax.mail.internet.MimeBodyPart;
 
 public class ReceiveMail {
 
@@ -51,6 +55,8 @@ public class ReceiveMail {
             this.connectAndOpenFolder();
         } catch (MessagingException ex) {
             Logger.getLogger(ReceiveMail.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(ReceiveMail.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -58,7 +64,7 @@ public class ReceiveMail {
         return new ArrayList<>(emails);
     }
 
-    private void connectAndOpenFolder() throws NoSuchProviderException, MessagingException {
+    private void connectAndOpenFolder() throws NoSuchProviderException, MessagingException, Exception {
         Store store = null;
         Folder folder = null;
         emails.clear();
@@ -75,7 +81,8 @@ public class ReceiveMail {
                         message[i].getSubject(),
                         message[i].getContent().toString(),
                         message[i].getReceivedDate(),
-                        message[i]
+                        message[i],
+                        getAttachments(message, i)
                 ));
             }
         } catch (IOException ex) {
@@ -85,33 +92,31 @@ public class ReceiveMail {
             store.close();
         }
     }
-    
-    public static Email getSpecificMail(int id){
+
+    public static Email getSpecificMail(int id) {
         for (Email email : emails) {
-            if(Integer.parseInt(email.getMessageNumber()) == id)
+            if (Integer.parseInt(email.getMessageNumber()) == id) {
                 return email;
+            }
         }
         return null;
     }
-    
-    private String getAttachments(Message[] message, int i) throws IOException, MessagingException {
-        String attachments = "";
 
+    private ArrayList<BodyPart> getAttachments(Message[] message, int i) throws IOException, MessagingException, Exception {
+        ArrayList<BodyPart> attachments = new ArrayList<>();
         Object objRef = message[i].getContent();
         Multipart multipart = null;
 
         if (objRef instanceof Multipart) {
             multipart = (Multipart) objRef;
 
-            attachments += ("Amount of attachments: " + multipart.getCount() + "<br>");
-            attachments += ("Attachment names: " + "<br>");
             for (int j = 0; j < multipart.getCount(); j++) {
                 BodyPart bodyPart = multipart.getBodyPart(j);
-                if (bodyPart.getFileName() != null) {
-                    attachments += (bodyPart.getFileName()) + "<br>";
-                }
+                attachments.add(bodyPart);
+                
             }
         }
+        System.out.println(attachments.toString());
         return attachments;
     }
 }
