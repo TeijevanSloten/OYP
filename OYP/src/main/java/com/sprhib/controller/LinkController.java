@@ -22,13 +22,6 @@ public class LinkController {
     public ModelAndView indexPage() {
         return new ModelAndView("home");
     }
-
-    @RequestMapping(value = "/showmail/{id}")
-    public ModelAndView getMailFunction(@PathVariable("id") int id) {
-        ModelAndView modelAndView = new ModelAndView("showmail");
-        modelAndView.addObject("mail", ReceiveMail.getSpecificMail(id));
-        return modelAndView;
-    }
     
     @RequestMapping(value = "/showmail")
     public ModelAndView showMail() {
@@ -36,7 +29,13 @@ public class LinkController {
         modelAndView.addObject("messages", ReceiveMail.getEmails());
         return modelAndView;
     }
-      
+    
+        @RequestMapping(value = "/showmail/{id}")
+    public ModelAndView getMailFunction(@PathVariable("id") int id) {
+        ModelAndView modelAndView = new ModelAndView("showmail");
+        modelAndView.addObject("mail", ReceiveMail.getSpecificMail(id));
+        return modelAndView;
+    }
     
     @RequestMapping(value = "/retrievemail")
     public String retrieveMail() {
@@ -66,11 +65,30 @@ public class LinkController {
                 Integer.parseInt(request.getParameter("id"))));
         return modelAndView;
     }
+    
     @RequestMapping(value = "/reply", method = RequestMethod.GET)
     public ModelAndView getReplyPage(HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView("reply");
         modelAndView.addObject("mail", ReceiveMail.getSpecificMail(
                 Integer.parseInt(request.getParameter("id"))));
+        return modelAndView;
+    }
+    
+    @RequestMapping(value = "/sendreply", method=RequestMethod.POST)
+    public @ResponseBody ModelAndView sendReply(HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView("home");
+        modelAndView.addObject("response", new SendEmail(ReceiveMail.getSpecificMail(
+                Integer.parseInt(request.getParameter("messageid")))).sendReply(
+               request.getParameter("message")));
+        return modelAndView;
+    }
+    
+    @RequestMapping(value = "/sendforward", method=RequestMethod.POST)
+    public @ResponseBody ModelAndView sendForward(HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView("home");
+        modelAndView.addObject("response", new SendEmail(ReceiveMail.getSpecificMail(
+                Integer.parseInt(request.getParameter("messageid")))).sendForward(request.getParameter("to"),
+               request.getParameter("message")));
         return modelAndView;
     }
 }

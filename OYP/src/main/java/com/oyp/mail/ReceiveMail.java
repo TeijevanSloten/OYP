@@ -41,7 +41,7 @@ public class ReceiveMail {
                 new javax.mail.Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication("pipodekloun2003", "pipowachtwoord");
+                        return new PasswordAuthentication(SMV.login , SMV.password);
                     }
                 });
     }
@@ -61,25 +61,19 @@ public class ReceiveMail {
     private void connectAndOpenFolder() throws NoSuchProviderException, MessagingException {
         Store store = null;
         Folder folder = null;
-        emails.clear();
         try {
             store = session.getStore("imaps");
-            store.connect("imap.gmail.com", "pipodekloun2003@gmail.com", "pipowachtwoord");
+            store.connect("imap.gmail.com", SMV.email , SMV.password);
             folder = store.getFolder("INBOX");//get inbox
             folder.open(Folder.READ_ONLY);//open folder only to read
             Message message[] = folder.getMessages();
-
+            
+            emails.clear();
             for (int i = 0; i < message.length; i++) {
-                emails.add(new Email(String.valueOf(message[i].getMessageNumber()),
-                        message[i].getFrom()[0].toString(),
-                        message[i].getSubject(),
-                        message[i].getContent().toString(),
-                        message[i].getReceivedDate(),
-                        message[i]
-                ));
+                this.saveMail(message[i]);
             }
         } catch (IOException ex) {
-            Logger.getLogger(ReceiveMail.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ReceiveMail.class.getName()).log(Level.SEVERE, null, ex);  
         } finally {
             folder.close(true);
             store.close();
@@ -113,5 +107,15 @@ public class ReceiveMail {
             }
         }
         return attachments;
+    }
+    
+    private void saveMail(Message message) throws MessagingException, IOException{
+        emails.add(new Email(String.valueOf(message.getMessageNumber()),
+                        message.getFrom()[0].toString(),
+                        message.getSubject(),
+                        message.getContent().toString(),
+                        message.getReceivedDate(),
+                        message
+                ));
     }
 }
