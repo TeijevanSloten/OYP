@@ -14,7 +14,7 @@ ${mail.getSubject()}
 ${mail.getContent()}
 <hr>
 <c:forEach var="attachment" items="${mail.getAttachmentsStringRepresentation()}">
-   <c:out value="${attachment}"/>    
+   ${attachment}   
 </c:forEach>
 
 <%@ include file="base/footer.jsp" %>

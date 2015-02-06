@@ -1,7 +1,7 @@
 package com.oyp.mail;
 
-import java.io.File;
-import java.io.IOException;
+
+
 import java.util.Date;
 import javax.mail.Message;
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeBodyPart;
+
 
 public class Email {
     private String messageNumber;
@@ -53,22 +53,6 @@ public class Email {
             }
        return null; 
     }
-    
-    public void saveAttachment(int attachmentNumber) throws Exception {
-        BodyPart bodyPart = attachmentsList.get(attachmentNumber);
-        String filename = bodyPart.getFileName();
-        File f = null;
-        try{
-            f = new File(filename);
-            while(f.exists()){
-                filename += 1;
-            }
-            ((MimeBodyPart)bodyPart).saveFile(f);
-        } catch(IOException e){
-            e.printStackTrace();
-        }
-    }
-    
     
     public String getFrom() {
         return from;

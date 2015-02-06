@@ -1,9 +1,6 @@
 package com.oyp.mail;
 
-import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import javax.mail.NoSuchProviderException;
 import java.util.Properties;
@@ -17,13 +14,15 @@ import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Store;
-import javax.mail.internet.MimeBodyPart;
+
 
 public class ReceiveMail {
 
     private Properties props;
     private Session session;
     private static ArrayList<Email> emails = new ArrayList<>();
+    ArrayList<BodyPart> attachments = new ArrayList<>();
+   
 
     public ReceiveMail() {
         setProperties();
@@ -45,7 +44,7 @@ public class ReceiveMail {
                 new javax.mail.Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication("pipodekloun2003", "pipowachtwoord");
+                        return new PasswordAuthentication(SMV.login , SMV.password);
                     }
                 });
     }
@@ -67,26 +66,22 @@ public class ReceiveMail {
     private void connectAndOpenFolder() throws NoSuchProviderException, MessagingException, Exception {
         Store store = null;
         Folder folder = null;
-        emails.clear();
         try {
             store = session.getStore("imaps");
-            store.connect("imap.gmail.com", "pipodekloun2003@gmail.com", "pipowachtwoord");
+            store.connect("imap.gmail.com", SMV.email , SMV.password);
             folder = store.getFolder("INBOX");//get inbox
             folder.open(Folder.READ_ONLY);//open folder only to read
             Message message[] = folder.getMessages();
-
+            
+            emails.clear();
             for (int i = 0; i < message.length; i++) {
-                emails.add(new Email(String.valueOf(message[i].getMessageNumber()),
-                        message[i].getFrom()[0].toString(),
-                        message[i].getSubject(),
-                        message[i].getContent().toString(),
-                        message[i].getReceivedDate(),
-                        message[i],
-                        getAttachments(message, i)
-                ));
+                getAttachments(message, i);
+                this.saveMail(message[i]);
+                
+                
             }
         } catch (IOException ex) {
-            Logger.getLogger(ReceiveMail.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ReceiveMail.class.getName()).log(Level.SEVERE, null, ex);  
         } finally {
             folder.close(true);
             store.close();
@@ -103,20 +98,31 @@ public class ReceiveMail {
     }
 
     private ArrayList<BodyPart> getAttachments(Message[] message, int i) throws IOException, MessagingException, Exception {
-        ArrayList<BodyPart> attachments = new ArrayList<>();
+        
         Object objRef = message[i].getContent();
         Multipart multipart = null;
 
         if (objRef instanceof Multipart) {
             multipart = (Multipart) objRef;
-
+            
             for (int j = 0; j < multipart.getCount(); j++) {
                 BodyPart bodyPart = multipart.getBodyPart(j);
-                attachments.add(bodyPart);
-                
+                    attachments.add(bodyPart);  
             }
         }
-        System.out.println(attachments.toString());
         return attachments;
+    }
+    
+    private void saveMail(Message message) throws MessagingException, IOException{
+        emails.add(new Email(String.valueOf(message.getMessageNumber()),
+                        message.getFrom()[0].toString(),
+                        message.getSubject(),
+                        message.getContent().toString(),
+                        message.getReceivedDate(),
+                        message,
+                        attachments
+                        
+                        ));
+
     }
 }
