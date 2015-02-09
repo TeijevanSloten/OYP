@@ -4,7 +4,6 @@ import com.ordina.email.ReceiveMail;
 import com.ordina.email.SendEmail;
 import com.ordina.entity.Email;
 import com.ordina.session.EmailFacade;
-import static com.sun.corba.se.spi.presentation.rmi.StubAdapter.request;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
-import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -24,7 +22,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
@@ -49,44 +46,26 @@ public class ControllerServlet extends HttpServlet {
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, Exception {
+            throws ServletException, Exception, IOException {
         String userPath = request.getServletPath();
-
         if (userPath.equals("/retrievemail")) {
             saveNewMessages();
-            try {
-                response.sendRedirect("");
-            } catch (IOException ex) {
-                Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            response.sendRedirect("");
         } else if (userPath.equals(
                 "/showmail")) {
             getServletContext().setAttribute("mail", ef.findMessageId(
                     Integer.parseInt(request.getParameter("id"))).get(0));
         } else if (userPath.equals("/send")) {
             this.sendEmailWithAttachments(request);
-            try {
-                response.sendRedirect("");
-            } catch (IOException ex) {
-                Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            response.sendRedirect("");
+
             return;
         } else if (userPath.equals("/sendreply")) {
             sendEmailWithAttachments(request, "RE: ");
-            try {
-                response.sendRedirect("");
-                return;
-            } catch (IOException ex) {
-                Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            response.sendRedirect("");
         } else if (userPath.equals("/sendforward")) {
             sendEmailWithAttachments(request, "FWD: ");
-            try {
-                response.sendRedirect("");
-                return;
-            } catch (IOException ex) {
-                Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            response.sendRedirect("");
         } else if (userPath.equals(
                 "/forward")) {
             getServletContext().setAttribute("mail",
@@ -96,10 +75,9 @@ public class ControllerServlet extends HttpServlet {
             getServletContext().setAttribute("mail",
                     ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
         }
-
         try {
             request.getRequestDispatcher("/WEB-INF/view" + userPath + ".jsp").forward(request, response);
-        } catch (Exception ex) {
+        } catch (ServletException | IOException ex) {
             ex.printStackTrace();
         }
 
