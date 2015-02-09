@@ -48,7 +48,7 @@ public class ControllerServlet extends HttpServlet {
             for (Message message : messages) {
                 try {
                     if(ef.findMessageId(message.getMessageNumber()).size() <= 0) {
-                        Email email =  new Email();
+                        Email email = new Email();
                         email.setMessageid(message.getMessageNumber());
                         email.setSubject(message.getSubject());
                         email.setContent(message.getContent().toString());
