@@ -9,13 +9,12 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -23,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author rbe20795
+ * @author tsl20897
  */
 @Entity
 @Table(name = "attachments")
@@ -34,10 +33,11 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Attachments.findByEmailid", query = "SELECT a FROM Attachments a WHERE a.emailid = :emailid")})
 public class Attachments implements Serializable {
     private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Lob
@@ -52,33 +52,29 @@ public class Attachments implements Serializable {
     @Size(max = 65535)
     @Column(name = "contenttype")
     private String contenttype;
-    @Id
     @Basic(optional = false)
     @NotNull
     @Column(name = "emailid")
-    private Integer emailid;
-    @JoinColumn(name = "emailid", referencedColumnName = "id", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
-    private Email email;
+    private int emailid;
 
     public Attachments() {
     }
 
-    public Attachments(Integer emailid) {
-        this.emailid = emailid;
+    public Attachments(Integer id) {
+        this.id = id;
     }
 
-    public Attachments(Integer emailid, int id, String filename) {
-        this.emailid = emailid;
+    public Attachments(Integer id, String filename, int emailid) {
         this.id = id;
         this.filename = filename;
+        this.emailid = emailid;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -106,26 +102,18 @@ public class Attachments implements Serializable {
         this.contenttype = contenttype;
     }
 
-    public Integer getEmailid() {
+    public int getEmailid() {
         return emailid;
     }
 
-    public void setEmailid(Integer emailid) {
+    public void setEmailid(int emailid) {
         this.emailid = emailid;
-    }
-
-    public Email getEmail() {
-        return email;
-    }
-
-    public void setEmail(Email email) {
-        this.email = email;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (emailid != null ? emailid.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -136,7 +124,7 @@ public class Attachments implements Serializable {
             return false;
         }
         Attachments other = (Attachments) object;
-        if ((this.emailid == null && other.emailid != null) || (this.emailid != null && !this.emailid.equals(other.emailid))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -144,7 +132,7 @@ public class Attachments implements Serializable {
 
     @Override
     public String toString() {
-        return "com.ordina.entity.Attachments[ emailid=" + emailid + " ]";
+        return "com.ordina.entity.Attachments[ id=" + id + " ]";
     }
     
 }

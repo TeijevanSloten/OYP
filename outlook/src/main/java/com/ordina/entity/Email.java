@@ -7,9 +7,7 @@ package com.ordina.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,8 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -29,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author rbe20795
+ * @author tsl20897
  */
 @Entity
 @Table(name = "email")
@@ -71,8 +67,6 @@ public class Email implements Serializable {
     @Column(name = "date")
     @Temporal(TemporalType.DATE)
     private Date date;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "emailid")
-    private Set<Attachments> attachments;
 
     public Email() {
     }
@@ -135,14 +129,6 @@ public class Email implements Serializable {
 
     public void setDate(Date date) {
         this.date = date;
-    }
-
-    public Set<Attachments> getAttachments() {
-        return attachments;
-    }
-
-    public void setAttachments(Set<Attachments> attachments) {
-        this.attachments = attachments;
     }
 
     @Override
