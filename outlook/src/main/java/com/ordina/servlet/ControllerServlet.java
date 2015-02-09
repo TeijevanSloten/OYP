@@ -6,7 +6,6 @@ import com.ordina.entity.Email;
 import com.ordina.session.EmailFacade;
 import java.io.File;
 import java.io.IOException;
-import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -46,31 +45,36 @@ public class ControllerServlet extends HttpServlet {
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException {
         String userPath = request.getServletPath();
 
         if (userPath.equals("/sendemail")) {
         } else if (userPath.equals("/showallmail")) {
 
         } else if (userPath.equals("/retrievemail")) {
-            ArrayList<Message> messages = new ReceiveMail().receiveMessages();
-            for (Message message : messages) {
-                try {
-                    if (ef.findMessageId(message.getMessageNumber()).size() <= 0) {
-                        Email email = new Email();
-                        email.setMessageid(message.getMessageNumber());
-                        email.setSubject(message.getSubject());
-                        email.setContent(message.getContent().toString());
-                        email.setFromemail(message.getFrom()[0].toString());
-                        email.setDate(message.getReceivedDate());
-                        ef.create(email);
-                        getServletContext().setAttribute("messages", ef.findAll());
+            try {
+                ArrayList<Message> messages = new ReceiveMail().receiveMessages();
+                for (Message message : messages) {
+                    try {
+                        if(ef.findMessageId(message.getMessageNumber()).size() <= 0) {
+                            
+                            Email email = new Email();
+                            email.setMessageid(message.getMessageNumber());
+                            email.setSubject(message.getSubject());
+                            email.setContent(message.getContent().toString());
+                            email.setFromemail(message.getFrom()[0].toString());
+                            email.setDate(message.getReceivedDate());
+                            ef.create(email);
+                            getServletContext().setAttribute("messages", ef.findAll());
+                        }
+                    } catch (MessagingException | IOException ex) {
+                        Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                } catch (MessagingException ex) {
-                    Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                this.sendRedirect(response, "showallmail");
+            } catch (IOException ex) {
+                Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-            this.sendRedirect(response, "showallmail");
         } else if (userPath.equals("/showmail")) {
             getServletContext().setAttribute("mail", ef.findMessageId(
                     Integer.parseInt(request.getParameter("id"))).get(0));
@@ -105,20 +109,32 @@ public class ControllerServlet extends HttpServlet {
                 }
             } catch (FileUploadException e) {
                 e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ex) {
+                Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
             se.sendMessage(to, message, attachmentNames.toArray(new String[attachmentNames.size()]));
-            response.sendRedirect("");
+            try {
+                response.sendRedirect("");
+            } catch (IOException ex) {
+                Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
             return;
         } else if (userPath.equals("/sendreply")) {
             SendEmail se = new SendEmail(ef.findMessageId(Integer.parseInt(request.getParameter("messageid"))).get(0));
             se.sendReply(request.getParameter("message"));
-            response.sendRedirect("");
+            try {
+                response.sendRedirect("");
+            } catch (IOException ex) {
+                Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } else if (userPath.equals("/sendforward")) {
             SendEmail se = new SendEmail(ef.findMessageId(Integer.parseInt(request.getParameter("messageid"))).get(0));
             se.sendForward(request.getParameter("to"), request.getParameter("message"));
-            response.sendRedirect("");
+            try {
+                response.sendRedirect("");
+            } catch (IOException ex) {
+                Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } else if (userPath.equals("/forward")) {
             getServletContext().setAttribute("mail",
                     ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
