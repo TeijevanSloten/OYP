@@ -45,7 +45,7 @@ public class SendEmail {
         this.replyto = replyto;
     }
 
-    public boolean sendMessage(String to, String body, String[] attachFiles) {
+    public boolean sendMessage(String to, String body, String[] attachFiles, String subject) {
         try {
             Message message = new MimeMessage(session);
             if (this.replyto != null) {
@@ -57,7 +57,7 @@ public class SendEmail {
             message.setFrom(new InternetAddress(SMV.email));
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(to));
-            message.setSubject("Testing Subject");
+            message.setSubject(subject);
             message.setSentDate(new Date());
 
             MimeBodyPart messageBodyPart = new MimeBodyPart();
@@ -78,44 +78,6 @@ public class SendEmail {
                 }
             }
             message.setContent(multipart);
-
-            Transport.send(message);
-            return true;
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public boolean sendReply(String body) {
-        try {
-            Message message = new MimeMessage(session);
-            message = (MimeMessage) message.reply(false);
-            message.setFrom(new InternetAddress(replyto.getFromemail()));
-            message.setText(body + "\n\n Original message:\n"
-                    + replyto.getContent());
-            message.setReplyTo(new InternetAddress[]{new InternetAddress(replyto.getFromemail())});
-            message.setSentDate(new Date());
-            message.setSubject("reply");
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(replyto.getFromemail()));
-            Transport.send(message);
-            return true;
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public boolean sendForward(String to, String body) {
-        try {
-            Message message = new MimeMessage(session);
-            message.setSubject("Fwd: " + replyto.getSubject());
-            message.setFrom(new InternetAddress(replyto.getFromemail()));
-            message.addRecipient(Message.RecipientType.TO,
-                    new InternetAddress(to));
-            message.setSentDate(new Date());
-            BodyPart messageBodyPart = new MimeBodyPart();
-            message.setText(body
-                    + "\n\nOriginal message:\n\n"
-                    + replyto.getContent());
 
             Transport.send(message);
             return true;

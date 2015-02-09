@@ -9,13 +9,11 @@ import com.ordina.session.EmailFacade;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
-
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -27,7 +25,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
@@ -51,15 +48,84 @@ public class ControllerServlet extends HttpServlet {
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+            throws ServletException, Exception, IOException {
         String userPath = request.getServletPath();
 
         if (userPath.equals("/sendemail")) {
         } else if (userPath.equals("/showallmail")) {
 
-        } else if (userPath.equals("/retrievemail")) {
-            try {
-                ArrayList<Message> messages = new ReceiveMail().receiveMessages();
+            saveNewMessages();
+            response.sendRedirect("");
+        } else if (userPath.equals(
+                "/showmail")) {
+            getServletContext().setAttribute("mail", ef.findMessageId(
+                    Integer.parseInt(request.getParameter("id"))).get(0));
+        } else if (userPath.equals("/send")) {
+            this.sendEmailWithAttachments(request);
+            response.sendRedirect("");
+
+            return;
+        } else if (userPath.equals("/sendreply")) {
+            sendEmailWithAttachments(request, "RE: ");
+            response.sendRedirect("");
+        } else if (userPath.equals("/sendforward")) {
+            sendEmailWithAttachments(request, "FWD: ");
+            response.sendRedirect("");
+        } else if (userPath.equals(
+                "/forward")) {
+            getServletContext().setAttribute("mail",
+                    ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
+        } else if (userPath.equals(
+                "/reply")) {
+            getServletContext().setAttribute("mail",
+                    ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
+        }
+        try {
+            request.getRequestDispatcher("/WEB-INF/view" + userPath + ".jsp").forward(request, response);
+        } catch (ServletException | IOException ex) {
+            ex.printStackTrace();
+        }
+
+        response.setContentType(
+                "text/html;charset=UTF-8");
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            processRequest(request, response);
+        } catch (Exception ex) {
+            Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            processRequest(request, response);
+        } catch (Exception ex) {
+            Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+    private void saveNewMessages() {
+        ArrayList<Message> messages = new ReceiveMail().receiveMessages();
                 for (Message message : messages) {
                     try {
                         if (ef.findMessageId(message.getMessageNumber()).size() <= 0) {
@@ -94,123 +160,53 @@ public class ControllerServlet extends HttpServlet {
                         Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-               response.sendRedirect("");
-               return;
-            } catch (IOException ex) {
-                Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else if (userPath.equals(
-                "/showmail")) {
-            getServletContext().setAttribute("mail", ef.findMessageId(
-                    Integer.parseInt(request.getParameter("id"))).get(0));
-        } else if (userPath.equals(
-                "/send")) {
-            SendEmail se = new SendEmail();
-            if (!ServletFileUpload.isMultipartContent(request)) {
-                throw new ServletException("Content type is not multipart/form-data");
-            }
-            DiskFileItemFactory fileFactory = new DiskFileItemFactory();
-            File filesDir = new File("D:\\projecten\\outlookitemstemp\\");
-            fileFactory.setRepository(filesDir);
-            ServletFileUpload uploader = new ServletFileUpload(fileFactory);
-            ArrayList<String> attachmentNames = new ArrayList<>();
-            String to = "teije.van.sloten@ordina.nl";
-            String message = "";
-            try {
-                List<FileItem> fileItemsList = uploader.parseRequest(request);
-                for(FileItem fileItem: fileItemsList) {
-                    if(fileItem.isFormField()) {
-                        String fieldname = fileItem.getFieldName();
-                        String fieldvalue = fileItem.getString();
-                        if(fieldname.equals("to")) {
-                            to = fieldvalue;
-                        } else if(fieldname.equals("message")){
-                            message = fieldvalue;
-                        }
-                    } else {
-                        File file = new File("D:\\projecten\\outlookitemstemp" + File.separator + fileItem.getName());
-                        fileItem.write(file);
-                        attachmentNames.add("D:\\projecten\\outlookitemstemp" + File.separator + fileItem.getName());
-                    }
+    }
+
+    private void sendEmailWithAttachments(HttpServletRequest request, String subject) throws ServletException, Exception {
+        SendEmail se = new SendEmail();
+        if (!ServletFileUpload.isMultipartContent(request)) {
+            throw new ServletException("Content type is not multipart/form-data");
+        }
+        DiskFileItemFactory fileFactory = new DiskFileItemFactory();
+        File filesDir = new File("D:\\projecten\\outlookitemstemp\\");
+        fileFactory.setRepository(filesDir);
+        ServletFileUpload uploader = new ServletFileUpload(fileFactory);
+        ArrayList<String> attachmentNames = new ArrayList<>();
+        String message = "";
+        String to = "";
+        Email email = null;
+        List<FileItem> fileItemsList = uploader.parseRequest(request);
+        for (FileItem fileItem : fileItemsList) {
+            if (fileItem.isFormField()) {
+                String fieldname = fileItem.getFieldName();
+                String fieldvalue = fileItem.getString();
+                if (fieldname.equals("to")) {
+                    to = fieldvalue;
+                } else if (fieldname.equals("message")) {
+                    message = fieldvalue;
+                } else if (fieldname.equals("subject")) {
+                    subject += fieldvalue;
+                } else if (fieldname.equals("messageid")) {
+                    email = ef.findMessageId(Integer.parseInt(fieldvalue)).get(0);
                 }
-            } catch (FileUploadException e) {
-                e.printStackTrace();
-            } catch (Exception ex) {
-                Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
+            } else {
+                if (!fileItem.getName().equals("")) {
+                    File file = new File("D:\\projecten\\outlookitemstemp" + File.separator + fileItem.getName());
+                    fileItem.write(file);
+                    attachmentNames.add("D:\\projecten\\outlookitemstemp" + File.separator + fileItem.getName());
+                }
             }
-            se.sendMessage(to, message, attachmentNames.toArray(new String[attachmentNames.size()]));
-            try {
-                response.sendRedirect("");
-            } catch (IOException ex) {
-                Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            return;
-        } else if (userPath.equals(
-                "/sendreply")) {
-            SendEmail se = new SendEmail(ef.findMessageId(Integer.parseInt(request.getParameter("messageid"))).get(0));
-            se.sendReply(request.getParameter("message"));
-            try {
-                response.sendRedirect("");
-            } catch (IOException ex) {
-                Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else if (userPath.equals(
-                "/sendforward")) {
-            SendEmail se = new SendEmail(ef.findMessageId(Integer.parseInt(request.getParameter("messageid"))).get(0));
-            se.sendForward(request.getParameter("to"), request.getParameter("message"));
-            try {
-                response.sendRedirect("");
-            } catch (IOException ex) {
-                Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else if (userPath.equals(
-                "/forward")) {
-            getServletContext().setAttribute("mail",
-                    ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
-        } else if (userPath.equals(
-                "/reply")) {
-            getServletContext().setAttribute("mail",
-                    ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
         }
-
-        try {
-            request.getRequestDispatcher("/WEB-INF/view" + userPath + ".jsp").forward(request, response);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        if (email != null) {
+            message += "\nOriginal message:\n" + email.getContent();
+            if (to.equals("")) {
+                to = email.getFromemail();
+            }
         }
-
-        response.setContentType(
-                "text/html;charset=UTF-8");
+        se.sendMessage(to, message, attachmentNames.toArray(new String[attachmentNames.size()]), subject);
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
-    private void sendRedirect(HttpServletResponse response, String url) throws IOException {
-        response.sendRedirect(url);
-        return;
+    private void sendEmailWithAttachments(HttpServletRequest request) throws ServletException, Exception {
+        sendEmailWithAttachments(request, "");
     }
 }
