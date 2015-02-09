@@ -12,8 +12,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Part;
+import javax.mail.internet.MimeBodyPart;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -55,7 +59,8 @@ public class ControllerServlet extends HttpServlet {
             } catch (IOException ex) {
                 Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (userPath.equals("/showmail")) {
+        } else if (userPath.equals(
+                "/showmail")) {
             getServletContext().setAttribute("mail", ef.findMessageId(
                     Integer.parseInt(request.getParameter("id"))).get(0));
         } else if (userPath.equals("/send")) {
@@ -82,10 +87,12 @@ public class ControllerServlet extends HttpServlet {
             } catch (IOException ex) {
                 Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (userPath.equals("/forward")) {
+        } else if (userPath.equals(
+                "/forward")) {
             getServletContext().setAttribute("mail",
                     ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
-        } else if (userPath.equals("/reply")) {
+        } else if (userPath.equals(
+                "/reply")) {
             getServletContext().setAttribute("mail",
                     ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
         }
@@ -95,7 +102,9 @@ public class ControllerServlet extends HttpServlet {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        response.setContentType("text/html;charset=UTF-8");
+
+        response.setContentType(
+                "text/html;charset=UTF-8");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -136,16 +145,28 @@ public class ControllerServlet extends HttpServlet {
         ArrayList<Message> messages = new ReceiveMail().receiveMessages();
         for (Message message : messages) {
             try {
-                if (ef.findMessageId(message.getMessageNumber()).size() <= 0) {
-                    Email email = new Email();
-                    email.setMessageid(message.getMessageNumber());
-                    email.setSubject(message.getSubject());
-                    email.setContent(message.getContent().toString());
-                    email.setFromemail(message.getFrom()[0].toString());
-                    email.setDate(message.getReceivedDate());
-                    ef.create(email);
-                    getServletContext().setAttribute("messages", ef.findAll());
+                //if (ef.findMessageId(message.getMessageNumber()).size() <= 0) {
+
+                Email email = new Email();
+                email.setMessageid(message.getMessageNumber());
+                email.setSubject(message.getSubject());
+                email.setContent(message.getContent().toString());
+                email.setFromemail(message.getFrom()[0].toString());
+                email.setDate(message.getReceivedDate());
+
+                String contentType = message.getContentType();
+                if (contentType.contains("multipart")) {
+                    Multipart multiPart = (Multipart) message.getContent();
+
+                    for (int i = 0; i < multiPart.getCount(); i++) {
+                        MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(i);
+                        if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
+                            part.saveFile("d://projecten/Attachments/" + part.getFileName());
+                        }
+                    }
+
                 }
+
             } catch (MessagingException | IOException ex) {
                 Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -180,7 +201,7 @@ public class ControllerServlet extends HttpServlet {
                     email = ef.findMessageId(Integer.parseInt(fieldvalue)).get(0);
                 }
             } else {
-                if(!fileItem.getName().equals("")) {
+                if (!fileItem.getName().equals("")) {
                     File file = new File("D:\\projecten\\outlookitemstemp" + File.separator + fileItem.getName());
                     fileItem.write(file);
                     attachmentNames.add("D:\\projecten\\outlookitemstemp" + File.separator + fileItem.getName());
@@ -189,7 +210,7 @@ public class ControllerServlet extends HttpServlet {
         }
         if (email != null) {
             message += "\nOriginal message:\n" + email.getContent();
-            if(to.equals("")) {
+            if (to.equals("")) {
                 to = email.getFromemail();
             }
         }
