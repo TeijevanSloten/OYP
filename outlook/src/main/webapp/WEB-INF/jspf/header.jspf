@@ -3,6 +3,7 @@
 
 <html>
     <head>
+        <script type="text/javascript" src="${initParam.jsPath}jquery.min.js"></script>
         <link rel="stylesheet" type="text/css" href="${initParam.cssPath}bootstrap.css">
     </head>
     <body>
