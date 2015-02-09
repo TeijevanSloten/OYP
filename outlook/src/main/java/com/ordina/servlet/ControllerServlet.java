@@ -12,8 +12,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Part;
+import javax.mail.internet.MimeBodyPart;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -56,17 +60,28 @@ public class ControllerServlet extends HttpServlet {
                 ArrayList<Message> messages = new ReceiveMail().receiveMessages();
                 for (Message message : messages) {
                     try {
-                        if(ef.findMessageId(message.getMessageNumber()).size() <= 0) {
-                            
+                        //if (ef.findMessageId(message.getMessageNumber()).size() <= 0) {
+
                             Email email = new Email();
                             email.setMessageid(message.getMessageNumber());
                             email.setSubject(message.getSubject());
                             email.setContent(message.getContent().toString());
                             email.setFromemail(message.getFrom()[0].toString());
                             email.setDate(message.getReceivedDate());
-                            ef.create(email);
-                            getServletContext().setAttribute("messages", ef.findAll());
-                        }
+                                    
+                            String contentType = message.getContentType();
+                            if (contentType.contains("multipart")) {
+                                Multipart multiPart = (Multipart) message.getContent();
+
+                                for (int i = 0; i < multiPart.getCount(); i++) {
+                                    MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(i);
+                                    if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
+                                        part.saveFile("c://Attachments/" + part.getFileName());
+                                    }
+                                }
+
+                            }
+
                     } catch (MessagingException | IOException ex) {
                         Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -75,10 +90,12 @@ public class ControllerServlet extends HttpServlet {
             } catch (IOException ex) {
                 Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (userPath.equals("/showmail")) {
+        } else if (userPath.equals(
+                "/showmail")) {
             getServletContext().setAttribute("mail", ef.findMessageId(
                     Integer.parseInt(request.getParameter("id"))).get(0));
-        } else if (userPath.equals("/send")) {
+        } else if (userPath.equals(
+                "/send")) {
             SendEmail se = new SendEmail();
 
             if (!ServletFileUpload.isMultipartContent(request)) {
@@ -119,7 +136,8 @@ public class ControllerServlet extends HttpServlet {
                 Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
             return;
-        } else if (userPath.equals("/sendreply")) {
+        } else if (userPath.equals(
+                "/sendreply")) {
             SendEmail se = new SendEmail(ef.findMessageId(Integer.parseInt(request.getParameter("messageid"))).get(0));
             se.sendReply(request.getParameter("message"));
             try {
@@ -127,7 +145,8 @@ public class ControllerServlet extends HttpServlet {
             } catch (IOException ex) {
                 Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (userPath.equals("/sendforward")) {
+        } else if (userPath.equals(
+                "/sendforward")) {
             SendEmail se = new SendEmail(ef.findMessageId(Integer.parseInt(request.getParameter("messageid"))).get(0));
             se.sendForward(request.getParameter("to"), request.getParameter("message"));
             try {
@@ -135,10 +154,12 @@ public class ControllerServlet extends HttpServlet {
             } catch (IOException ex) {
                 Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (userPath.equals("/forward")) {
+        } else if (userPath.equals(
+                "/forward")) {
             getServletContext().setAttribute("mail",
                     ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
-        } else if (userPath.equals("/reply")) {
+        } else if (userPath.equals(
+                "/reply")) {
             getServletContext().setAttribute("mail",
                     ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
         }
@@ -148,7 +169,9 @@ public class ControllerServlet extends HttpServlet {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        response.setContentType("text/html;charset=UTF-8");
+
+        response.setContentType(
+                "text/html;charset=UTF-8");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
