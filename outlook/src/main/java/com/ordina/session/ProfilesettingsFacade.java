@@ -5,8 +5,7 @@
  */
 package com.ordina.session;
 
-import com.ordina.entity.Email;
-import java.util.List;
+import com.ordina.entity.Profilesettings;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,7 +15,7 @@ import javax.persistence.PersistenceContext;
  * @author tsl20897
  */
 @Stateless
-public class EmailFacade extends AbstractFacade<Email> {
+public class ProfilesettingsFacade extends AbstractFacade<Profilesettings> {
     @PersistenceContext(unitName = "com.ordina_Test3_war_1.0-SNAPSHOTPU")
     private EntityManager em;
 
@@ -25,14 +24,8 @@ public class EmailFacade extends AbstractFacade<Email> {
         return em;
     }
 
-    public EmailFacade() {
-        super(Email.class);
+    public ProfilesettingsFacade() {
+        super(Profilesettings.class);
     }
-    
-    
-    public List<Email> findMessageId(int id) {
-        return getEntityManager().createNamedQuery("Email.findByMessageid", Email .class).setParameter("messageid", id).getResultList();
-    }
-  
     
 }

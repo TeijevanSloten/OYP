@@ -1,5 +1,6 @@
 package com.ordina.email;
 
+import com.ordina.entity.Email;
 import java.util.Properties;
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -36,20 +37,7 @@ public class SendEmail {
     }
 
     public SendEmail(Email replyto) {
-        props = new Properties();
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.socketFactory.port", "465");
-        props.put("mail.smtp.socketFactory.class",
-                "javax.net.ssl.SSLSocketFactory");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.port", "465");
-
-        session = Session.getInstance(props,
-                new javax.mail.Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(SMV.login, SMV.password);
-                    }
-                });
+        this();
         this.replyto = replyto;
     }
 
@@ -58,9 +46,9 @@ public class SendEmail {
             Message message = new MimeMessage(session);
             if (this.replyto != null) {
                 message = (MimeMessage) message.reply(false);
-                message.setFrom(new InternetAddress(replyto.getFrom()));
+                message.setFrom(new InternetAddress(replyto.getFromemail()));
                 message.setText("Replied message");
-                message.setReplyTo(replyto.getMessage().getReplyTo());
+                message.setReplyTo(new InternetAddress[]{new InternetAddress(replyto.getFromemail())});
             }
             message.setFrom(new InternetAddress(SMV.email));
             message.setRecipients(Message.RecipientType.TO,
@@ -79,13 +67,13 @@ public class SendEmail {
         try {
             Message message = new MimeMessage(session);
             message = (MimeMessage) message.reply(false);
-            message.setFrom(new InternetAddress(replyto.getFrom()));
+            message.setFrom(new InternetAddress(replyto.getFromemail()));
             message.setText(body + "\n\n Original message:\n" +
                     replyto.getContent());
-            message.setReplyTo(replyto.getMessage().getReplyTo());
+            message.setReplyTo(new InternetAddress[]{new InternetAddress(replyto.getFromemail())});
 
             message.setSubject("reply");
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(replyto.getFrom()));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(replyto.getFromemail()));
             Transport.send(message);
             return true;
         } catch (MessagingException e) {
@@ -97,7 +85,7 @@ public class SendEmail {
         try {
             Message message = new MimeMessage(session);
             message.setSubject("Fwd: " + replyto.getSubject());
-            message.setFrom(new InternetAddress(replyto.getFrom()));
+            message.setFrom(new InternetAddress(replyto.getFromemail()));
             message.addRecipient(Message.RecipientType.TO,
                     new InternetAddress(to));
             

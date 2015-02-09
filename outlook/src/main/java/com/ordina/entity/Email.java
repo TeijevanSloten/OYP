@@ -6,6 +6,7 @@
 package com.ordina.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +17,8 @@ import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -30,7 +33,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Email.findAll", query = "SELECT e FROM Email e"),
     @NamedQuery(name = "Email.findById", query = "SELECT e FROM Email e WHERE e.id = :id"),
-    @NamedQuery(name = "Email.findByMessageid", query = "SELECT e FROM Email e WHERE e.messageid = :messageid")})
+    @NamedQuery(name = "Email.findByMessageid", query = "SELECT e FROM Email e WHERE e.messageid = :messageid"),
+    @NamedQuery(name = "Email.findByDate", query = "SELECT e FROM Email e WHERE e.date = :date")})
 public class Email implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -50,6 +54,17 @@ public class Email implements Serializable {
     @Size(max = 2147483647)
     @Column(name = "content")
     private String content;
+    @Basic(optional = false)
+    @NotNull
+    @Lob
+    @Size(min = 1, max = 65535)
+    @Column(name = "fromemail")
+    private String fromemail;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date date;
 
     public Email() {
     }
@@ -58,9 +73,11 @@ public class Email implements Serializable {
         this.id = id;
     }
 
-    public Email(Integer id, int messageid) {
+    public Email(Integer id, int messageid, String fromemail, Date date) {
         this.id = id;
         this.messageid = messageid;
+        this.fromemail = fromemail;
+        this.date = date;
     }
 
     public Integer getId() {
@@ -93,6 +110,22 @@ public class Email implements Serializable {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getFromemail() {
+        return fromemail;
+    }
+
+    public void setFromemail(String fromemail) {
+        this.fromemail = fromemail;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     @Override

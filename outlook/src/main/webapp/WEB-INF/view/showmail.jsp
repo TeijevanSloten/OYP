@@ -9,17 +9,11 @@
     <body>
         <h1>Your Messages:</h1>
         <a href="${pageContext.request.contextPath}/showallmail">Back</a> |
-        <a href="${pageContext.request.contextPath}/forward?id=${mail.getMessageNumber()}">Forward</a> |
-        <a href="${pageContext.request.contextPath}/reply?id=${mail.getMessageNumber()}">Reply</a>
+        <a href="${pageContext.request.contextPath}/forward?id=${mail.getMessageid()}">Forward</a> |
+        <a href="${pageContext.request.contextPath}/reply?id=${mail.getMessageid()}">Reply</a>
         <hr>
-        ${mail.getFrom()}
+        ${mail.getFromemail()} ||   ${email.getSubject()}
         <hr >
         ${mail.getContent()}
-
-        <c:forEach var="email" items="${mail2}">
-            ${email.getSubject()}
-
-
-        </c:forEach>
     </body>
 </html>

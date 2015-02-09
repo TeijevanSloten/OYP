@@ -12,8 +12,8 @@
         <a href="retrievemail">Refresh</a>
         <c:forEach var="email" items="${messages}">
             <hr>
-            <a href="showmail?id=${email.getMessageNumber()}">
-                ${email.getSubject()} || ${email.getReceivedDate()}
+            <a href="showmail?id=${email.getMessageid()}">
+                ${email.getSubject()} || ${email.getDate()}
             </a>
         </c:forEach>
     </body>

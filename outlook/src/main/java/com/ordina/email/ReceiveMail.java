@@ -19,7 +19,6 @@ public class ReceiveMail {
 
     private Properties props;
     private Session session;
-    private static ArrayList<Email> emails = new ArrayList<>();
 
     public ReceiveMail() {
         setProperties();
@@ -46,44 +45,24 @@ public class ReceiveMail {
                 });
     }
 
-    public void retrieveMessages() {
+    public ArrayList<Message> receiveMessages() {
         try {
-            this.connectAndOpenFolder();
-        } catch (MessagingException ex) {
-            Logger.getLogger(ReceiveMail.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public static ArrayList<Email> getEmails() {
-        return new ArrayList<>(emails);
-    }
-
-    private void connectAndOpenFolder() throws NoSuchProviderException, MessagingException {
-        Store store = null;
-        Folder folder = null;
-        try {
+            Store store = null;
+            Folder folder = null;
+            ArrayList<Message> email = new ArrayList<>();
             store = session.getStore("imaps");
             store.connect("imap.gmail.com", SMV.email , SMV.password);
-            folder = store.getFolder("INBOX");//get inbox
-            folder.open(Folder.READ_ONLY);//open folder only to read
+            folder = store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
             Message message[] = folder.getMessages();
-            
-            emails.clear();
             for (int i = 0; i < message.length; i++) {
-                this.saveMail(message[i]);
+                email.add(message[i]);
             }
-        } catch (IOException ex) {
-            Logger.getLogger(ReceiveMail.class.getName()).log(Level.SEVERE, null, ex);  
-        } finally {
-            folder.close(true);
-            store.close();
-        }
-    }
-    
-    public static Email getSpecificMail(int id){
-        for (Email email : emails) {
-            if(Integer.parseInt(email.getMessageNumber()) == id)
-                return email;
+            return email;
+        } catch (NoSuchProviderException ex) {
+            Logger.getLogger(ReceiveMail.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MessagingException ex) {
+            Logger.getLogger(ReceiveMail.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -107,15 +86,5 @@ public class ReceiveMail {
             }
         }
         return attachments;
-    }
-    
-    private void saveMail(Message message) throws MessagingException, IOException{
-        emails.add(new Email(String.valueOf(message.getMessageNumber()),
-                        message.getFrom()[0].toString(),
-                        message.getSubject(),
-                        message.getContent().toString(),
-                        message.getReceivedDate(),
-                        message
-                ));
     }
 }
