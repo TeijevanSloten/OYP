@@ -69,7 +69,7 @@ public class Email implements Serializable {
     @Column(name = "date")
     @Temporal(TemporalType.DATE)
     private Date date;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "emailid")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "email")
     private Attachments attachments;
 
     public Email() {

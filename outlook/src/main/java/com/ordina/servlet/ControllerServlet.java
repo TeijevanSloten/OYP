@@ -4,10 +4,10 @@ import com.ordina.email.ReceiveMail;
 import com.ordina.email.SendEmail;
 import com.ordina.entity.Email;
 import com.ordina.session.EmailFacade;
+import static com.sun.corba.se.spi.presentation.rmi.StubAdapter.request;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,33 +45,13 @@ public class ControllerServlet extends HttpServlet {
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+            throws ServletException, Exception {
         String userPath = request.getServletPath();
 
-        if (userPath.equals("/sendemail")) {
-        } else if (userPath.equals("/showallmail")) {
-
-        } else if (userPath.equals("/retrievemail")) {
+        if (userPath.equals("/retrievemail")) {
+            saveNewMessages();
             try {
-                ArrayList<Message> messages = new ReceiveMail().receiveMessages();
-                for (Message message : messages) {
-                    try {
-                        if(ef.findMessageId(message.getMessageNumber()).size() <= 0) {
-                            
-                            Email email = new Email();
-                            email.setMessageid(message.getMessageNumber());
-                            email.setSubject(message.getSubject());
-                            email.setContent(message.getContent().toString());
-                            email.setFromemail(message.getFrom()[0].toString());
-                            email.setDate(message.getReceivedDate());
-                            ef.create(email);
-                            getServletContext().setAttribute("messages", ef.findAll());
-                        }
-                    } catch (MessagingException | IOException ex) {
-                        Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-                this.sendRedirect(response, "showallmail");
+                response.sendRedirect("");
             } catch (IOException ex) {
                 Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -79,40 +59,7 @@ public class ControllerServlet extends HttpServlet {
             getServletContext().setAttribute("mail", ef.findMessageId(
                     Integer.parseInt(request.getParameter("id"))).get(0));
         } else if (userPath.equals("/send")) {
-            SendEmail se = new SendEmail();
-            if (!ServletFileUpload.isMultipartContent(request)) {
-                throw new ServletException("Content type is not multipart/form-data");
-            }
-            DiskFileItemFactory fileFactory = new DiskFileItemFactory();
-            File filesDir = new File("D:\\projecten\\outlookitemstemp\\");
-            fileFactory.setRepository(filesDir);
-            ServletFileUpload uploader = new ServletFileUpload(fileFactory);
-            ArrayList<String> attachmentNames = new ArrayList<>();
-            String to = "teije.van.sloten@ordina.nl";
-            String message = "";
-            try {
-                List<FileItem> fileItemsList = uploader.parseRequest(request);
-                for(FileItem fileItem: fileItemsList) {
-                    if(fileItem.isFormField()) {
-                        String fieldname = fileItem.getFieldName();
-                        String fieldvalue = fileItem.getString();
-                        if(fieldname.equals("to")) {
-                            to = fieldvalue;
-                        } else if(fieldname.equals("message")){
-                            message = fieldvalue;
-                        }
-                    } else {
-                        File file = new File("D:\\projecten\\outlookitemstemp" + File.separator + fileItem.getName());
-                        fileItem.write(file);
-                        attachmentNames.add("D:\\projecten\\outlookitemstemp" + File.separator + fileItem.getName());
-                    }
-                }
-            } catch (FileUploadException e) {
-                e.printStackTrace();
-            } catch (Exception ex) {
-                Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            se.sendMessage(to, message, attachmentNames.toArray(new String[attachmentNames.size()]));
+            this.sendEmailWithAttachments(request);
             try {
                 response.sendRedirect("");
             } catch (IOException ex) {
@@ -120,18 +67,18 @@ public class ControllerServlet extends HttpServlet {
             }
             return;
         } else if (userPath.equals("/sendreply")) {
-            SendEmail se = new SendEmail(ef.findMessageId(Integer.parseInt(request.getParameter("messageid"))).get(0));
-            se.sendReply(request.getParameter("message"));
+            sendEmailWithAttachments(request, "RE: ");
             try {
                 response.sendRedirect("");
+                return;
             } catch (IOException ex) {
                 Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else if (userPath.equals("/sendforward")) {
-            SendEmail se = new SendEmail(ef.findMessageId(Integer.parseInt(request.getParameter("messageid"))).get(0));
-            se.sendForward(request.getParameter("to"), request.getParameter("message"));
+            sendEmailWithAttachments(request, "FWD: ");
             try {
                 response.sendRedirect("");
+                return;
             } catch (IOException ex) {
                 Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -163,13 +110,21 @@ public class ControllerServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (Exception ex) {
+            Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (Exception ex) {
+            Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
@@ -177,8 +132,71 @@ public class ControllerServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void sendRedirect(HttpServletResponse response, String url) throws IOException {
-        response.sendRedirect(url);
-        return;
+    private void saveNewMessages() {
+        ArrayList<Message> messages = new ReceiveMail().receiveMessages();
+        for (Message message : messages) {
+            try {
+                if (ef.findMessageId(message.getMessageNumber()).size() <= 0) {
+                    Email email = new Email();
+                    email.setMessageid(message.getMessageNumber());
+                    email.setSubject(message.getSubject());
+                    email.setContent(message.getContent().toString());
+                    email.setFromemail(message.getFrom()[0].toString());
+                    email.setDate(message.getReceivedDate());
+                    ef.create(email);
+                    getServletContext().setAttribute("messages", ef.findAll());
+                }
+            } catch (MessagingException | IOException ex) {
+                Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void sendEmailWithAttachments(HttpServletRequest request, String subject) throws ServletException, Exception {
+        SendEmail se = new SendEmail();
+        if (!ServletFileUpload.isMultipartContent(request)) {
+            throw new ServletException("Content type is not multipart/form-data");
+        }
+        DiskFileItemFactory fileFactory = new DiskFileItemFactory();
+        File filesDir = new File("D:\\projecten\\outlookitemstemp\\");
+        fileFactory.setRepository(filesDir);
+        ServletFileUpload uploader = new ServletFileUpload(fileFactory);
+        ArrayList<String> attachmentNames = new ArrayList<>();
+        String message = "";
+        String to = "";
+        Email email = null;
+        List<FileItem> fileItemsList = uploader.parseRequest(request);
+        for (FileItem fileItem : fileItemsList) {
+            if (fileItem.isFormField()) {
+                String fieldname = fileItem.getFieldName();
+                String fieldvalue = fileItem.getString();
+                if (fieldname.equals("to")) {
+                    to = fieldvalue;
+                } else if (fieldname.equals("message")) {
+                    message = fieldvalue;
+                } else if (fieldname.equals("subject")) {
+                    subject += fieldvalue;
+                } else if (fieldname.equals("messageid")) {
+                    email = ef.findMessageId(Integer.parseInt(fieldvalue)).get(0);
+                }
+            } else {
+                if(!fileItem.getName().equals("")) {
+                    File file = new File("D:\\projecten\\outlookitemstemp" + File.separator + fileItem.getName());
+                    fileItem.write(file);
+                    attachmentNames.add("D:\\projecten\\outlookitemstemp" + File.separator + fileItem.getName());
+                }
+            }
+        }
+        if (email != null) {
+            message += "\nOriginal message:\n" + email.getContent();
+            if(to.equals("")) {
+                to = email.getFromemail();
+            }
+        }
+        se.sendMessage(to, message, attachmentNames.toArray(new String[attachmentNames.size()]), subject);
+    }
+
+    private void sendEmailWithAttachments(HttpServletRequest request) throws ServletException, Exception {
+        sendEmailWithAttachments(request, "");
     }
 }
