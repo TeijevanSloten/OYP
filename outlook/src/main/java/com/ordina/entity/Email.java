@@ -8,6 +8,7 @@ package com.ordina.entity;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -47,11 +49,13 @@ public class Email implements Serializable {
     @Column(name = "messageid")
     private int messageid;
     @Lob
-    @Size(max = 2147483647)
+    @Size(max = 65535)
     @Column(name = "subject")
     private String subject;
+    @Basic(optional = false)
+    @NotNull
     @Lob
-    @Size(max = 2147483647)
+    @Size(min = 1, max = 65535)
     @Column(name = "content")
     private String content;
     @Basic(optional = false)
@@ -63,8 +67,10 @@ public class Email implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "date")
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     private Date date;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "emailid")
+    private Attachments attachments;
 
     public Email() {
     }
@@ -73,9 +79,10 @@ public class Email implements Serializable {
         this.id = id;
     }
 
-    public Email(Integer id, int messageid, String fromemail, Date date) {
+    public Email(Integer id, int messageid, String content, String fromemail, Date date) {
         this.id = id;
         this.messageid = messageid;
+        this.content = content;
         this.fromemail = fromemail;
         this.date = date;
     }
@@ -126,6 +133,14 @@ public class Email implements Serializable {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public Attachments getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(Attachments attachments) {
+        this.attachments = attachments;
     }
 
     @Override

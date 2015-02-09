@@ -76,37 +76,39 @@ public class ControllerServlet extends HttpServlet {
                     Integer.parseInt(request.getParameter("id"))).get(0));
         } else if (userPath.equals("/send")) {
             SendEmail se = new SendEmail();
-
             if (!ServletFileUpload.isMultipartContent(request)) {
                 throw new ServletException("Content type is not multipart/form-data");
             }
             DiskFileItemFactory fileFactory = new DiskFileItemFactory();
-            File filesDir = new File("D:\\projecten\\");
+            File filesDir = new File("D:\\projecten\\outlookitemstemp\\");
             fileFactory.setRepository(filesDir);
             ServletFileUpload uploader = new ServletFileUpload(fileFactory);
+            ArrayList<String> attachmentNames = new ArrayList<>();
+            String to = "teije.van.sloten@ordina.nl";
+            String message = "";
             try {
                 List<FileItem> fileItemsList = uploader.parseRequest(request);
-                Iterator<FileItem> fileItemsIterator = fileItemsList.iterator();
-                while (fileItemsIterator.hasNext()) {
-                    FileItem fileItem = fileItemsIterator.next();
-                    System.out.println("FieldName=" + fileItem.getFieldName());
-                    System.out.println("FileName=" + fileItem.getName());
-                    System.out.println("ContentType=" + fileItem.getContentType());
-                    System.out.println("Size in bytes=" + fileItem.getSize());
-
-                    File file = new File("D:\\projecten\\" + File.separator + fileItem.getName());
-                    System.out.println("Absolute Path at server=" + file.getAbsolutePath());
-                    fileItem.write(file);
-                    System.out.println("File " + fileItem.getName() + " uploaded successfully.");
-
+                for(FileItem fileItem: fileItemsList) {
+                    if(fileItem.isFormField()) {
+                        String fieldname = fileItem.getFieldName();
+                        String fieldvalue = fileItem.getString();
+                        if(fieldname.equals("to")) {
+                            to = fieldvalue;
+                        } else if(fieldname.equals("message")){
+                            message = fieldvalue;
+                        }
+                    } else {
+                        File file = new File("D:\\projecten\\outlookitemstemp" + File.separator + fileItem.getName());
+                        fileItem.write(file);
+                        attachmentNames.add("D:\\projecten\\outlookitemstemp" + File.separator + fileItem.getName());
+                    }
                 }
             } catch (FileUploadException e) {
                 e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            //se.sendMessage(request.getParameter("to"), request.getParameter("message"));
+            se.sendMessage(to, message, attachmentNames.toArray(new String[attachmentNames.size()]));
             response.sendRedirect("");
             return;
         } else if (userPath.equals("/sendreply")) {

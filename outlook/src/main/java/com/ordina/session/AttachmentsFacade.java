@@ -5,7 +5,7 @@
  */
 package com.ordina.session;
 
-import com.ordina.entity.User;
+import com.ordina.entity.Attachments;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,7 +15,7 @@ import javax.persistence.PersistenceContext;
  * @author tsl20897
  */
 @Stateless
-public class UserFacade extends AbstractFacade<User> {
+public class AttachmentsFacade extends AbstractFacade<Attachments> {
     @PersistenceContext(unitName = "com.ordina_Test3_war_1.0-SNAPSHOTPU")
     private EntityManager em;
 
@@ -24,8 +24,8 @@ public class UserFacade extends AbstractFacade<User> {
         return em;
     }
 
-    public UserFacade() {
-        super(User.class);
+    public AttachmentsFacade() {
+        super(Attachments.class);
     }
     
 }

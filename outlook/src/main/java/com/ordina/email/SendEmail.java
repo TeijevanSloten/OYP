@@ -1,16 +1,20 @@
 package com.ordina.email;
 
 import com.ordina.entity.Email;
+import java.io.IOException;
+import java.util.Date;
 import java.util.Properties;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 public class SendEmail {
 
@@ -41,7 +45,7 @@ public class SendEmail {
         this.replyto = replyto;
     }
 
-    public boolean sendMessage(String to, String body) {
+    public boolean sendMessage(String to, String body, String[] attachFiles) {
         try {
             Message message = new MimeMessage(session);
             if (this.replyto != null) {
@@ -54,7 +58,26 @@ public class SendEmail {
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(to));
             message.setSubject("Testing Subject");
-            message.setText(body);
+            message.setSentDate(new Date());
+
+            MimeBodyPart messageBodyPart = new MimeBodyPart();
+            messageBodyPart.setContent(body, "text/html");
+
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(messageBodyPart);
+
+            if (attachFiles != null && attachFiles.length > 0) {
+                for (String filePath : attachFiles) {
+                    MimeBodyPart attachPart = new MimeBodyPart();
+                    try {
+                        attachPart.attachFile(filePath);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    multipart.addBodyPart(attachPart);
+                }
+            }
+            message.setContent(multipart);
 
             Transport.send(message);
             return true;
@@ -68,10 +91,10 @@ public class SendEmail {
             Message message = new MimeMessage(session);
             message = (MimeMessage) message.reply(false);
             message.setFrom(new InternetAddress(replyto.getFromemail()));
-            message.setText(body + "\n\n Original message:\n" +
-                    replyto.getContent());
+            message.setText(body + "\n\n Original message:\n"
+                    + replyto.getContent());
             message.setReplyTo(new InternetAddress[]{new InternetAddress(replyto.getFromemail())});
-
+            message.setSentDate(new Date());
             message.setSubject("reply");
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(replyto.getFromemail()));
             Transport.send(message);
@@ -88,11 +111,11 @@ public class SendEmail {
             message.setFrom(new InternetAddress(replyto.getFromemail()));
             message.addRecipient(Message.RecipientType.TO,
                     new InternetAddress(to));
-            
+            message.setSentDate(new Date());
             BodyPart messageBodyPart = new MimeBodyPart();
             message.setText(body
                     + "\n\nOriginal message:\n\n"
-                    + replyto.getContent());    
+                    + replyto.getContent());
 
             Transport.send(message);
             return true;
