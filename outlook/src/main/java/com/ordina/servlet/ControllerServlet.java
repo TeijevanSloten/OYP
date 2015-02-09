@@ -2,17 +2,20 @@ package com.ordina.servlet;
 
 import com.ordina.email.ReceiveMail;
 import com.ordina.email.SendEmail;
+import com.ordina.entity.Attachments;
 import com.ordina.entity.Email;
+import com.ordina.session.AttachmentsFacade;
 import com.ordina.session.EmailFacade;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
-import javax.mail.BodyPart;
+
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -42,8 +45,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 public class ControllerServlet extends HttpServlet {
 
     @EJB
-    private EmailFacade ef;
-
+    private EmailFacade ef;    
     public void init() throws ServletException {
         getServletContext().setAttribute("messages", ef.findAll());
     }
@@ -60,7 +62,7 @@ public class ControllerServlet extends HttpServlet {
                 ArrayList<Message> messages = new ReceiveMail().receiveMessages();
                 for (Message message : messages) {
                     try {
-                        //if (ef.findMessageId(message.getMessageNumber()).size() <= 0) {
+                        if (ef.findMessageId(message.getMessageNumber()).size() <= 0) {
 
                             Email email = new Email();
                             email.setMessageid(message.getMessageNumber());
@@ -68,25 +70,32 @@ public class ControllerServlet extends HttpServlet {
                             email.setContent(message.getContent().toString());
                             email.setFromemail(message.getFrom()[0].toString());
                             email.setDate(message.getReceivedDate());
-                                    
+                            ef.create(email);
                             String contentType = message.getContentType();
                             if (contentType.contains("multipart")) {
                                 Multipart multiPart = (Multipart) message.getContent();
-
+                                Set<Attachments> att = email.getAttachments();
                                 for (int i = 0; i < multiPart.getCount(); i++) {
                                     MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(i);
                                     if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
-                                        part.saveFile("d://projecten/Attachments/" + part.getFileName());
+                                       // Attachments a = new Attachments();
+                                       // a.setContenttype(part.getContentType());
+                                        //a.setFilename(part.getFileName());
+                                        //a.setFilesize(String.valueOf(part.getSize()));
+                                        //System.out.println(part.getFileName() + " | akj;flsd4=kfja;klsd4=jf;laksdj;fklaj");
+                                        //att.add(a);
+                                        //part.saveFile("d://projecten/Attachments/test_" + part.getFileName());
                                     }
                                 }
-
+                                //email.setAttachments(att);
                             }
-
+                        }
                     } catch (MessagingException | IOException ex) {
                         Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-                this.sendRedirect(response, "showallmail");
+               response.sendRedirect("");
+               return;
             } catch (IOException ex) {
                 Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }

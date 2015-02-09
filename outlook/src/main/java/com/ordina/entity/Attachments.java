@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
@@ -22,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author tsl20897
+ * @author rbe20795
  */
 @Entity
 @Table(name = "attachments")
@@ -45,10 +46,6 @@ public class Attachments implements Serializable {
     private String filename;
     @Lob
     @Size(max = 65535)
-    @Column(name = "fieldname")
-    private String fieldname;
-    @Lob
-    @Size(max = 65535)
     @Column(name = "filesize")
     private String filesize;
     @Lob
@@ -56,7 +53,7 @@ public class Attachments implements Serializable {
     @Column(name = "contenttype")
     private String contenttype;
     @JoinColumn(name = "emailid", referencedColumnName = "id")
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     private Email emailid;
 
     public Attachments() {
@@ -85,14 +82,6 @@ public class Attachments implements Serializable {
 
     public void setFilename(String filename) {
         this.filename = filename;
-    }
-
-    public String getFieldname() {
-        return fieldname;
-    }
-
-    public void setFieldname(String fieldname) {
-        this.fieldname = fieldname;
     }
 
     public String getFilesize() {
