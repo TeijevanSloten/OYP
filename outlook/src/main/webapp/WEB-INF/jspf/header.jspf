@@ -3,6 +3,7 @@
 
 <html>
     <head>
+        <link rel="stylesheet" type="text/css" href="${initParam.cssPath}bootstrap.css">
     </head>
     <body>
         
