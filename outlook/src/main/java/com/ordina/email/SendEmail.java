@@ -4,7 +4,6 @@ import com.ordina.entity.Email;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Properties;
-import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;

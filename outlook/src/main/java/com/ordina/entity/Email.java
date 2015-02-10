@@ -16,7 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author tsl20897
+ * @author rbe20795
  */
 @Entity
 @Table(name = "email")
@@ -131,7 +130,6 @@ public class Email implements Serializable {
     public void setDate(Date date) {
         this.date = date;
     }
-
 
     @Override
     public int hashCode() {

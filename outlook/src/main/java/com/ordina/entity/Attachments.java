@@ -12,11 +12,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -24,14 +22,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author tsl20897
+ * @author rbe20795
  */
 @Entity
 @Table(name = "attachments")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Attachments.findAll", query = "SELECT a FROM Attachments a"),
-    @NamedQuery(name = "Attachments.findById", query = "SELECT a FROM Attachments a WHERE a.id = :id")})
+    @NamedQuery(name = "Attachments.findById", query = "SELECT a FROM Attachments a WHERE a.id = :id"),
+    @NamedQuery(name = "Attachments.findByEmailid", query = "SELECT a FROM Attachments a WHERE a.emailid = :emailid")})
 public class Attachments implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -53,12 +52,10 @@ public class Attachments implements Serializable {
     @Size(max = 65535)
     @Column(name = "contenttype")
     private String contenttype;
-    
     @Basic(optional = false)
     @NotNull
     @Column(name = "emailid")
     private int emailid;
-
 
     public Attachments() {
     }

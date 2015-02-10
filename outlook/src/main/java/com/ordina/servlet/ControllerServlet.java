@@ -1,31 +1,18 @@
 package com.ordina.servlet;
 
-import com.ordina.email.ReceiveMail;
-import com.ordina.email.SendEmail;
-import com.ordina.entity.Attachments;
-import com.ordina.entity.Email;
+import com.ordina.email.SaveEmailAndAttachments;
+import com.ordina.email.SendEmailWithAttachments;
 import com.ordina.session.AttachmentsFacade;
 import com.ordina.session.EmailFacade;
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.internet.MimeBodyPart;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 @WebServlet(name = "ControllerServlet", urlPatterns = {
     "/sendemail",
@@ -53,46 +40,55 @@ public class ControllerServlet extends HttpServlet {
             throws ServletException {
         try {
             String userPath = request.getServletPath();
-            if (userPath.equals("/retrievemail")) {
-                saveNewMessages();
-                response.sendRedirect("");
-                return;
-            } else if (userPath.equals(
-                    "/showallmail")) {
-                getServletContext().setAttribute("messages", ef.findAll());
-            } else if (userPath.equals(
-                    "/showmail")) {
-                getServletContext().setAttribute("mail", ef.findMessageId(
-                        Integer.parseInt(request.getParameter("id"))).get(0));
-                getServletContext().setAttribute("attachments", af.findMessageId(
-                        Integer.parseInt(request.getParameter("id"))));
-            } else if (userPath.equals("/send")) {
-                sendEmailWithAttachments(request);
-                response.sendRedirect("");
-                return;
-            } else if (userPath.equals("/sendreply")) {
-                sendEmailWithAttachments(request, "RE: ");
-                response.sendRedirect("");
-            } else if (userPath.equals("/sendforward")) {
-                sendEmailWithAttachments(request, "FWD: ");
-                response.sendRedirect("");
-            } else if (userPath.equals(
-                    "/forward")) {
-                getServletContext().setAttribute("mail",
-                        ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
-            } else if (userPath.equals(
-                    "/reply")) {
-                getServletContext().setAttribute("mail",
-                        ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
-            }
-            System.out.println(System.getProperty("user.dir"));
 
-            try {
-                request.getRequestDispatcher("/WEB-INF/view/" + userPath + ".jsp").forward(request, response);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            switch (userPath) {
+                case ("/retrievemail"): {
+                    new SaveEmailAndAttachments(ef, af);
+                    response.sendRedirect("");
+                    return;
+                }
+                case ("/showallmail"): {
+                    getServletContext().setAttribute("messages", ef.findAll());
+                    break;
+                }
+                case ("/showmail"): {
+                    getServletContext().setAttribute("mail", ef.findMessageId(
+                            Integer.parseInt(request.getParameter("id"))).get(0));
+                    getServletContext().setAttribute("attachments", af.findMessageId(
+                            Integer.parseInt(request.getParameter("id"))));
+                    break;
+                }
+                case ("/send"): {
+                    new SendEmailWithAttachments(request, "RE: ", ef, af);
+                    response.sendRedirect("");
+                    return;
+                }
+                case ("/sendreply"): {
+                    new SendEmailWithAttachments(request, "RE: ", ef, af);
+                    response.sendRedirect("");
+                    break;
+                }
+                case ("/sendforward"): {
+                    new SendEmailWithAttachments(request, "FWD: ", ef, af);
+                    response.sendRedirect("");
+                    break;
+                }
+                case ("/forward"): {
+                    getServletContext().setAttribute("mail",
+                            ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
+                    break;
+                }
+                case ("/reply"): {
+                    getServletContext().setAttribute("mail",
+                            ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
+                    break;
+                }
             }
-        } catch (IOException ex) {
+
+            System.out.println(System.getProperty("user.dir"));
+            request.getRequestDispatcher("/WEB-INF/view/" + userPath + ".jsp").forward(request, response);
+
+        } catch (ServletException | IOException ex) {
             Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
@@ -125,41 +121,94 @@ public class ControllerServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void saveNewMessages() {
-        ArrayList<Message> messages = new ReceiveMail().receiveMessages();
-        for (Message message : messages) {
-            try {
-                if (ef.findMessageId(message.getMessageNumber()).size() <= 0) {
-                    Email email = new Email();
-                    email.setMessageid(message.getMessageNumber());
-                    email.setSubject(message.getSubject());
-                    email.setContent(message.getContent().toString());
-                    email.setFromemail(message.getFrom()[0].toString());
-                    email.setDate(message.getReceivedDate());
-                    ef.create(email);
-                    String contentType = message.getContentType();
-                    if (contentType.contains("multipart")) {
-                        Multipart multiPart = (Multipart) message.getContent();
-                        for (int i = 0; i < multiPart.getCount(); i++) {
-                            MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(i);
-                            if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
-                                Attachments attachment = new Attachments();
-                                attachment.setContenttype(part.getContentType());
-                                attachment.setFilename(part.getFileName());
-                                attachment.setFilesize(String.valueOf(part.getSize()));
-                                attachment.setEmailid(email.getMessageid());
-                                af.create(attachment);
-                                part.saveFile("D:\\projecten\\Attachments\\" + email.getMessageid() + "-" + part.getFileName());
-                            }
-                        }
-                    }
-                }
-            } catch (MessagingException | IOException ex) {
-                Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
 
+    private void sendEmailWithAttachments(HttpServletRequest request) throws ServletException, Exception {
+        sendEmailWithAttachments(request, "");
+    }
+}
+
+/*
+ if (userPath.equals("/retrievemail")) {
+                
+ return;
+ } else if (userPath.equals(
+ "/showallmail")) {
+ getServletContext().setAttribute("messages", ef.findAll());
+ } else if (userPath.equals(
+ "/showmail")) {
+ getServletContext().setAttribute("mail", ef.findMessageId(
+ Integer.parseInt(request.getParameter("id"))).get(0));
+ getServletContext().setAttribute("attachments", af.findMessageId(
+ Integer.parseInt(request.getParameter("id"))));
+ } else if (userPath.equals("/send")) {
+ sendEmailWithAttachments(request);
+ response.sendRedirect("");
+ return;
+ } else if (userPath.equals("/sendreply")) {
+ sendEmailWithAttachments(request, "RE: ");
+ response.sendRedirect("");
+ } else if (userPath.equals("/sendforward")) {
+ sendEmailWithAttachments(request, "FWD: ");
+ response.sendRedirect("");
+ } else if (userPath.equals(
+ "/forward")) {
+ getServletContext().setAttribute("mail",
+ ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
+ } else if (userPath.equals(
+ "/reply")) {
+ getServletContext().setAttribute("mail",
+ ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
+ }
+ System.out.println(System.getProperty("user.dir"));
+
+ try {
+ request.getRequestDispatcher("/WEB-INF/view/" + userPath + ".jsp").forward(request, response);
+ } catch (Exception ex) {
+ ex.printStackTrace();
+ }
+ } catch (IOException ex) {
+ Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
+ } catch (Exception ex) {
+ Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
+ }
+ }
+ */
+/*private void saveNewMessages() {
+ ArrayList<Message> messages = new ReceiveMail().receiveMessages();
+ for (Message message : messages) {
+ try {
+ if (ef.findMessageId(message.getMessageNumber()).size() <= 0) {
+ Email email = new Email();
+ email.setMessageid(message.getMessageNumber());
+ email.setSubject(message.getSubject());
+ email.setContent(message.getContent().toString());
+ email.setFromemail(message.getFrom()[0].toString());
+ email.setDate(message.getReceivedDate());
+ ef.create(email);
+ String contentType = message.getContentType();
+ if (contentType.contains("multipart")) {
+ Multipart multiPart = (Multipart) message.getContent();
+ for (int i = 0; i < multiPart.getCount(); i++) {
+ MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(i);
+ if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
+ Attachments attachment = new Attachments();
+ attachment.setContenttype(part.getContentType());
+ attachment.setFilename(part.getFileName());
+ attachment.setFilesize(String.valueOf(part.getSize()));
+ attachment.setEmailid(email.getMessageid());
+ af.create(attachment);
+ part.saveFile("D:\\projecten\\Attachments\\" + email.getMessageid() + "-" + part.getFileName());
+ }
+ }
+ }
+ }
+ } catch (MessagingException | IOException ex) {
+ Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
+ }
+ }
+ }*/
+
+/*
     private void sendEmailWithAttachments(HttpServletRequest request, String subject) throws ServletException, Exception {
         SendEmail se = new SendEmail();
         if (!ServletFileUpload.isMultipartContent(request)) {
@@ -202,9 +251,4 @@ public class ControllerServlet extends HttpServlet {
             }
         }
         se.sendMessage(to, message, attachmentNames.toArray(new String[attachmentNames.size()]), subject);
-    }
-
-    private void sendEmailWithAttachments(HttpServletRequest request) throws ServletException, Exception {
-        sendEmailWithAttachments(request, "");
-    }
-}
+    }*/
