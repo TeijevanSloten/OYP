@@ -54,25 +54,23 @@ public class ControllerServlet extends HttpServlet {
         try {
             String userPath = request.getServletPath();
             if (userPath.equals("/retrievemail")) {
-
-                saveNewMessages("");
+                saveNewMessages();
                 response.sendRedirect("");
                 return;
-
             } else if (userPath.equals(
                     "/showmail")) {
                 getServletContext().setAttribute("mail", ef.findMessageId(
                         Integer.parseInt(request.getParameter("id"))).get(0));
                 getServletContext().setAttribute("attachments", af.findAll());
             } else if (userPath.equals("/send")) {
-                //sendEmailWithAttachments(request);
+                sendEmailWithAttachments(request);
                 response.sendRedirect("");
                 return;
             } else if (userPath.equals("/sendreply")) {
-                //sendEmailWithAttachments(request, "RE: ");
+                sendEmailWithAttachments(request, "RE: ");
                 response.sendRedirect("");
             } else if (userPath.equals("/sendforward")) {
-                //sendEmailWithAttachments(request, "FWD: ");
+                sendEmailWithAttachments(request, "FWD: ");
                 response.sendRedirect("");
             } else if (userPath.equals(
                     "/forward")) {
@@ -83,14 +81,16 @@ public class ControllerServlet extends HttpServlet {
                 getServletContext().setAttribute("mail",
                         ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
             }
-
-            String url = "/WEB-INF/view/" + userPath + ".jsp";
+            System.out.println(System.getProperty("user.dir"));
+            
             try {
-                request.getRequestDispatcher(url).forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/view/" + userPath + ".jsp").forward(request, response);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         } catch (IOException ex) {
+            Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
             Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -121,7 +121,7 @@ public class ControllerServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void saveNewMessages(String filePath) {
+    private void saveNewMessages() {
         ArrayList<Message> messages = new ReceiveMail().receiveMessages();
         for (Message message : messages) {
             try {
@@ -145,7 +145,7 @@ public class ControllerServlet extends HttpServlet {
                                 attachment.setFilesize(String.valueOf(part.getSize()));
                                 attachment.setEmailid(email.getMessageid());
                                 af.create(attachment);
-                                part.saveFile(filePath + email.getMessageid() + "-" + part.getFileName());
+                                part.saveFile("D:\\projecten\\Attachments\\" + email.getMessageid() + "-" + part.getFileName());
                             }
                         }
                     }
@@ -162,7 +162,7 @@ public class ControllerServlet extends HttpServlet {
             throw new ServletException("Content type is not multipart/form-data");
         }
         DiskFileItemFactory fileFactory = new DiskFileItemFactory();
-        File filesDir = new File("D:\\projecten\\outlookitemstemp\\");
+        File filesDir = new File("D:\\projecten\\Attachments\\temp\\");
         fileFactory.setRepository(filesDir);
         ServletFileUpload uploader = new ServletFileUpload(fileFactory);
         ArrayList<String> attachmentNames = new ArrayList<>();
