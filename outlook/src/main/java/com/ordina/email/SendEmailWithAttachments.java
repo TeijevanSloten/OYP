@@ -6,6 +6,7 @@ import com.ordina.session.EmailFacade;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.fileupload.FileItem;
@@ -15,17 +16,21 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 public class SendEmailWithAttachments {
 
-    HttpServletRequest request;
-    String subject;
-    EmailFacade ef;
-    AttachmentsFacade af;
+    private HttpServletRequest request;
+    private String subject;
+    private File filesDir;
+    private List<FileItem> fileItemsList;
+    private ArrayList<String> attachmentNames = new ArrayList<>();
+    private String message = "";
+    private String to = "teije.van.sloten@ordina.nl";
+    private Email email = null;
+    
+    @EJB
+    private EmailFacade ef;
+    @EJB
+    private AttachmentsFacade af;
 
-    File filesDir;
-    List<FileItem> fileItemsList;
-    ArrayList<String> attachmentNames = new ArrayList<>();
-    String message = "";
-    String to = "";
-    Email email = null;
+  
 
     public SendEmailWithAttachments(HttpServletRequest request, String subject, EmailFacade ef, AttachmentsFacade af) throws Exception {
         this.request = request;

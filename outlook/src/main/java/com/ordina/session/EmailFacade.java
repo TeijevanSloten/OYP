@@ -1,6 +1,7 @@
 package com.ordina.session;
 
 import com.ordina.entity.Email;
+import java.util.Collections;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -22,5 +23,11 @@ public class EmailFacade extends AbstractFacade<Email> {
     
     public List<Email> findMessageId(int id) {
         return getEntityManager().createNamedQuery("Email.findByMessageid", Email .class).setParameter("messageid", id).getResultList();
+    }
+    
+    public List<Email> findAllByDate() {
+        List<Email> emails = getEntityManager().createNamedQuery("Email.findAll", Email .class).getResultList();
+        Collections.reverse(emails);
+        return emails;
     }
 }

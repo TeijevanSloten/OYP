@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "ControllerServlet", urlPatterns = {
     "/sendemail",
     "/showmail",
-    "/showallmail",
     "/retrievemail",
     "/forward",
     "/reply",
@@ -33,29 +32,28 @@ public class ControllerServlet extends HttpServlet {
     private AttachmentsFacade af;
 
     public void init() throws ServletException {
-        getServletContext().setAttribute("messages", ef.findAll());
+        getServletContext().setAttribute("messages", ef.findAllByDate());
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException {
         try {
             String userPath = request.getServletPath();
-
+            setActions(userPath);
             switch (userPath) {
                 case ("/retrievemail"): {
                     new SaveEmailAndAttachments(ef, af);
-                    response.sendRedirect("");
+                    getServletContext().setAttribute("messages", ef.findAllByDate());
+                    response.sendRedirect("showmail");
                     return;
                 }
-                case ("/showallmail"): {
-                    getServletContext().setAttribute("messages", ef.findAll());
-                    break;
-                }
                 case ("/showmail"): {
-                    getServletContext().setAttribute("mail", ef.findMessageId(
-                            Integer.parseInt(request.getParameter("id"))).get(0));
-                    getServletContext().setAttribute("attachments", af.findMessageId(
-                            Integer.parseInt(request.getParameter("id"))));
+                    if(request.getParameter("id") != null){
+                        getServletContext().setAttribute("mail", ef.findMessageId(
+                                Integer.parseInt(request.getParameter("id"))).get(0));
+                        getServletContext().setAttribute("attachments", af.findMessageId(
+                                Integer.parseInt(request.getParameter("id"))));
+                    }
                     break;
                 }
                 case ("/send"): {
@@ -84,8 +82,6 @@ public class ControllerServlet extends HttpServlet {
                     break;
                 }
             }
-
-            System.out.println(System.getProperty("user.dir"));
             request.getRequestDispatcher("/WEB-INF/view/" + userPath + ".jsp").forward(request, response);
 
         } catch (ServletException | IOException ex) {
@@ -121,13 +117,22 @@ public class ControllerServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-
-    private void sendEmailWithAttachments(HttpServletRequest request) throws ServletException, Exception {
-        sendEmailWithAttachments(request, "");
+    private void setActions(String path){
+        if(path.equals("/showmail")){
+            getServletContext().setAttribute("actions", new String[]{"forward", "reply"});
+        } else {
+            getServletContext().removeAttribute("actions");
+        }
     }
+
+   
 }
 
 /*
+ private void sendEmailWithAttachments(HttpServletRequest request) throws ServletException, Exception {
+        //sendEmailWithAttachments(request, "");
+    }
+
  if (userPath.equals("/retrievemail")) {
                 
  return;

@@ -6,6 +6,7 @@
 package com.ordina.entity;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -126,7 +127,12 @@ public class Email implements Serializable {
     public Date getDate() {
         return date;
     }
-
+    
+    public String getSimpleDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yy");
+        return dateFormat.format(date);
+    }
+    
     public void setDate(Date date) {
         this.date = date;
     }

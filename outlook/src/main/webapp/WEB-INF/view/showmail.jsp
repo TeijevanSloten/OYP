@@ -1,51 +1,93 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
-    <div class="col-lg-2 col-lg-offset-0 ">
-
-        <h1>Messages:</h1>
-        <ul class="list-group">
+<style>
+    .email-ul {
+        border: 0;
+        border-top: 1px solid #bbb;
+        position: relative; 
+        left: -15px;
+        height: 800px !important;
+        overflow-y: scroll;
+    }
+    .email-list {
+        border: 0;
+    }
+    .email-list:hover {
+        background: rgb(207, 207, 207);
+        border-radius: 0;
+    }
+    .title {
+       
+        padding-bottom: 5px;
+        margin-right: 15px;
+    }
+    .mail-header {
+        margin-bottom: 10px;
+    }
+    
+</style>
+<div class="row">
+    <div class="col-md-3" >
+        <h2 class="title">Messages:</h2>
+        <ul class="list-group email-ul">  
             <c:forEach var="email" items="${messages}">
-                <li class="list-group-item">
-                <a  href="showmail?id=${email.getMessageid()}">
-                    ${email.getSubject()}
+                <a href="showmail?id=${email.getMessageid()}" style="color: black; text-decoration: none;">
+                    <li class="list-group-item email-list">
+                        <span class="pull-right" >${email.getSimpleDate()}</span>
+                        ${email.getSubject()}
+                    </li>
                 </a>
-                </li>
             </c:forEach>
-       </ul>
+        </ul>
     </div>
 
-    <div class="col-lg-10  ">
-
-        <h1>Your Messages:</h1>
-        <a class="btn btn-primary"  href="${pageContext.request.contextPath}/showallmail">Back</a> 
-        <a class="btn btn-primary"  href="${pageContext.request.contextPath}/forward?id=${mail.getMessageid()}">Forward</a> 
-        <a class="btn btn-primary"  href="${pageContext.request.contextPath}/reply?id=${mail.getMessageid()}">Reply</a>
-        <hr>
-        <div class="form-group">
-            <span class="badge">From: </span> ${mail.getFromemail()}
+    <div class="col-md-9" style="padding-left: 0;">
+        <c:if test="${mail != null}">
+        <h2 class="title">${mail.getSubject()}</h2>
+        <div class="row mail-header">
+            <div class="col-md-1">
+                <span class="badge">From: </span> 
+            </div>
+            <div class="col-md-11">
+                ${mail.getFromemail()}
+            </div>
         </div>
-        <div class="form-group">
-            <span class="badge">Subject: </span> ${mail.getSubject()} 
+        <div class="row mail-header">
+            <div class="col-md-1">
+                <span class="badge">Subject: </span> 
+            </div>
+            <div class="col-md-11">
+               ${mail.getSubject()}
+            </div>
         </div>
-        <div class="form-group">
-            <span class="badge"> Sent: </span> ${mail.getDate()} 
-
+        <div class="row mail-header">
+            <div class="col-md-1">
+                <span class="badge">Sent: </span> 
+            </div>
+            <div class="col-md-11">
+               ${mail.getDate()}
+            </div>
         </div>
-        <hr>
-        <div class="from-group">
-            ${mail.getContent()}
+        <c:if test="${attachments.size() > 0}">
+        <div class="row mail-header">
+            <div class="col-md-1">
+                <span class="badge">Attachments: </span> 
+            </div>
+            <div class="col-md-11">
+                <c:forEach var="attachment" items="${attachments}">
+                <a href="D:/projecten/Attachments/${attachment.getEmailid()}-${attachment.getFilename()}" target="_blank">
+                    ${attachment.getFilename()}
+                </a> <br>
+            </c:forEach>
+            </div>
         </div>
-        <hr>
-
-
-
-        <h4>Attachments</h4>
-        <c:forEach var="attachment" items="${attachments}">
-            <a href="${pageContext.request.contextPath}Attachments/${attachment.getEmailid()}-${attachment.getFilename()}" target="_blank">
-                ${attachment.getFilename()}
-            </a> <br>
-        </c:forEach>
-
-
+        </c:if>
+        <pre style="min-height: 100px !important">${mail.getContent()}</pre>
+        </c:if>
+        <c:if test="${mail == null}">
+            <h2>
+                No message selected
+            </h2>
+        </c:if>
     </div>       
+</div>
