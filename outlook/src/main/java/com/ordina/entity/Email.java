@@ -8,7 +8,6 @@ package com.ordina.entity;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author rbe20795
+ * @author tsl20897
  */
 @Entity
 @Table(name = "email")
@@ -69,8 +68,6 @@ public class Email implements Serializable {
     @Column(name = "date")
     @Temporal(TemporalType.DATE)
     private Date date;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "emailid")
-    private Attachments attachments;
 
     public Email() {
     }
@@ -135,13 +132,6 @@ public class Email implements Serializable {
         this.date = date;
     }
 
-    public Attachments getAttachments() {
-        return attachments;
-    }
-
-    public void setAttachments(Attachments attachments) {
-        this.attachments = attachments;
-    }
 
     @Override
     public int hashCode() {

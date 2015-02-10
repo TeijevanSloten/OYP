@@ -8,3 +8,10 @@
 ${mail.getFromemail()} ||   ${email.getSubject()}
 <hr >
 ${mail.getContent()}
+<hr>
+<h4>Attachments</h4>
+<c:forEach var="attachment" items="${attachments}">
+    <a href="${pageContext.request.contextPath}Attachments/${attachment.getEmailid()}-${attachment.getFilename()}" target="_blank">
+        ${attachment.getFilename()}
+    </a> <br>
+</c:forEach>

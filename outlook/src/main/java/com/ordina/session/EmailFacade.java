@@ -23,5 +23,4 @@ public class EmailFacade extends AbstractFacade<Email> {
     public List<Email> findMessageId(int id) {
         return getEntityManager().createNamedQuery("Email.findByMessageid", Email .class).setParameter("messageid", id).getResultList();
     }
-  
 }

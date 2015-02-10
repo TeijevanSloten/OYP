@@ -9,6 +9,8 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -22,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author rbe20795
+ * @author tsl20897
  */
 @Entity
 @Table(name = "attachments")
@@ -33,8 +35,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Attachments implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
@@ -51,9 +53,12 @@ public class Attachments implements Serializable {
     @Size(max = 65535)
     @Column(name = "contenttype")
     private String contenttype;
-    @JoinColumn(name = "emailid", referencedColumnName = "id")
-    @OneToOne(optional = false)
-    private Email emailid;
+    
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "emailid")
+    private int emailid;
+
 
     public Attachments() {
     }
@@ -62,9 +67,10 @@ public class Attachments implements Serializable {
         this.id = id;
     }
 
-    public Attachments(Integer id, String filename) {
+    public Attachments(Integer id, String filename, int emailid) {
         this.id = id;
         this.filename = filename;
+        this.emailid = emailid;
     }
 
     public Integer getId() {
@@ -99,11 +105,11 @@ public class Attachments implements Serializable {
         this.contenttype = contenttype;
     }
 
-    public Email getEmailid() {
+    public int getEmailid() {
         return emailid;
     }
 
-    public void setEmailid(Email emailid) {
+    public void setEmailid(int emailid) {
         this.emailid = emailid;
     }
 
