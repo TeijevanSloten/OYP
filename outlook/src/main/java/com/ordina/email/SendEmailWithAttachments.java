@@ -23,6 +23,7 @@ public class SendEmailWithAttachments {
     private ArrayList<String> attachmentNames = new ArrayList<>();
     private String message = "";
     private String to = "teije.van.sloten@ordina.nl";
+    private String cc = "";
     private Email email = null;
     
     @EJB
@@ -48,7 +49,7 @@ public class SendEmailWithAttachments {
                 to = email.getFromemail();
             }
         }
-        se.sendMessage(to, message, attachmentNames.toArray(new String[attachmentNames.size()]), subject);
+        se.sendMessage(to, cc, null, message, attachmentNames.toArray(new String[attachmentNames.size()]), subject);
     }
 
     private void createFileItemsList() throws FileUploadException {

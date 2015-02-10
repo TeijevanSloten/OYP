@@ -10,6 +10,14 @@
             <input id="emailInput" class="form-control" placeholder="email" type="email" name="to">
         </div>
         <div class="form-group">
+            <label class="label label-primary" for="emailInput">CC:</label><br>
+            <input id="emailInputCC" class="form-control" placeholder="email" type="text" name="CC">
+        </div>
+        <div class="form-group">
+            <label class="label label-primary" for="emailInput">BCC:</label><br>
+            <input id="emailInputBCC" class="form-control" placeholder="email" type="text" name="BCC">
+        </div>
+        <div class="form-group">
             <label  class="label label-primary" for="subjectInput">Subject:</label><br>
             <input id="subjectInput" class="form-control" placeholder="Subject" type="text" name="subject"><br>
         </div>
