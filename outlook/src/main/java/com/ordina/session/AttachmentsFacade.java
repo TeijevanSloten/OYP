@@ -6,6 +6,7 @@
 package com.ordina.session;
 
 import com.ordina.entity.Attachments;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,6 +27,10 @@ public class AttachmentsFacade extends AbstractFacade<Attachments> {
 
     public AttachmentsFacade() {
         super(Attachments.class);
+    }
+    
+        public List<Attachments> findMessageId(int id) {
+        return getEntityManager().createNamedQuery("Attachments.findByEmailid", Attachments .class).setParameter("emailid", id).getResultList();
     }
     
 }
