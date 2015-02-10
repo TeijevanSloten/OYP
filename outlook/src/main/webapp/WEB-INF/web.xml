@@ -10,7 +10,11 @@
     </context-param>
     <context-param>
         <param-name>fontPath</param-name>
-        <param-value>font/</param-value>
+        <param-value>fonts/</param-value>
+    </context-param>
+    <context-param>
+        <param-name>imgPath</param-name>
+        <param-value>img/</param-value>
     </context-param>
     <session-config>
         <session-timeout>

@@ -5,6 +5,76 @@
     <head>
         <script type="text/javascript" src="${initParam.jsPath}jquery.min.js"></script>
         <link rel="stylesheet" type="text/css" href="${initParam.cssPath}bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="${initParam.cssPath}bootstrap.css">
+        <title>Oyp.com</title>
+        <style>
+            .refreshbutton {
+                color: white !important;
+                border-right: 1px solid rgb(176, 176, 176);
+                background: #0072C6;
+                padding-right: 15px;
+                padding-left: 15px;
+            }
+            .refreshbutton:hover {
+                background: #025A9B !important;
+            }
+            .logo {
+                color: white !important;
+                margin-right: 10px;
+                margin-left: 0px !important;
+                padding-left: 10px;
+                font-size: 20px !important;
+            }
+            .logo:hover {
+                background: #025A9B !important;
+            }
+            .refreshwrapper {
+                width: 50px;
+            }
+            .menuitem{
+                color: white !important;
+            }
+            .menuitem:hover {
+                background: #025A9B !important;
+            }
+            .profile-img {
+                height: 50px;
+            }
+        </style>
     </head>
-    <body>
-        
+    <body>       
+        <nav class="navbar navbar-default navbar-fixed-top" style="background: #0072C6">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand refreshbutton" href="/showallmail">
+                        <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>                        
+                    </a>
+                    <a class="navbar-brand logo" href="/showallmail" style="font-weight: 100">Oyp.com</a>
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="#" class="menuitem">
+                                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true" ></span>
+                                New
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav pull-right" style="position: relative; right: -15px;">
+                        <li>
+                            <a href="#" class="menuitem">
+                                Teije van Sloten
+                            </a>
+                        </li>
+                        <li style="height: 50px;">
+                            <img src="${initParam.imgPath}profile_icon.jpg" class="profile-img">
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
