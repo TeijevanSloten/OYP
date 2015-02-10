@@ -58,10 +58,14 @@ public class ControllerServlet extends HttpServlet {
                 response.sendRedirect("");
                 return;
             } else if (userPath.equals(
+                    "/showallmail")) {
+                getServletContext().setAttribute("messages", ef.findAll());
+            } else if (userPath.equals(
                     "/showmail")) {
                 getServletContext().setAttribute("mail", ef.findMessageId(
                         Integer.parseInt(request.getParameter("id"))).get(0));
-                getServletContext().setAttribute("attachments", af.findAll());
+                getServletContext().setAttribute("attachments", af.findMessageId(
+                        Integer.parseInt(request.getParameter("id"))));
             } else if (userPath.equals("/send")) {
                 sendEmailWithAttachments(request);
                 response.sendRedirect("");
@@ -82,7 +86,7 @@ public class ControllerServlet extends HttpServlet {
                         ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
             }
             System.out.println(System.getProperty("user.dir"));
-            
+
             try {
                 request.getRequestDispatcher("/WEB-INF/view/" + userPath + ".jsp").forward(request, response);
             } catch (Exception ex) {
