@@ -40,6 +40,9 @@
             .profile-img {
                 height: 50px;
             }
+           
+
+            
         </style>
     </head>
     <body>       
@@ -52,7 +55,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand refreshbutton" href="/showallmail">
+                    <a class="navbar-brand refreshbutton" href="retrievemail">
                         <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>                        
                     </a>
                     <a class="navbar-brand logo" href="/showallmail" style="font-weight: 100">Oyp.com</a>
@@ -68,7 +71,7 @@
                     <ul class="nav navbar-nav pull-right" style="position: relative; right: -15px;">
                         <li>
                             <a href="#" class="menuitem">
-                                Teije van Sloten
+                                Pipo de Cloun
                             </a>
                         </li>
                         <li style="height: 50px;">
@@ -78,3 +81,4 @@
                 </div>
             </div>
         </nav>
+<div class="container-fluid" style="margin-top: 50px">   
