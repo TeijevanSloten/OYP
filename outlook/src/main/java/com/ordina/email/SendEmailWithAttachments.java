@@ -30,13 +30,9 @@ public class SendEmailWithAttachments {
     @EJB
     private AttachmentsFacade af;
 
-  
-
-    public SendEmailWithAttachments(HttpServletRequest request, String subject, EmailFacade ef, AttachmentsFacade af) throws Exception {
+    public SendEmailWithAttachments(HttpServletRequest request, String subject) throws Exception {
         this.request = request;
         this.subject = subject;
-        this.ef = ef;
-        this.af = af;
         sendEmail();
     }
 

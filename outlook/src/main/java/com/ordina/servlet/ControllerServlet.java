@@ -1,10 +1,14 @@
 package com.ordina.servlet;
 
 import com.ordina.email.SaveEmailAndAttachments;
-import com.ordina.email.SendEmailWithAttachments;
+import com.ordina.email.SendEmail;
+import com.ordina.entity.Email;
 import com.ordina.session.AttachmentsFacade;
 import com.ordina.session.EmailFacade;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -13,6 +17,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 @WebServlet(name = "ControllerServlet", urlPatterns = {
     "/sendemail",
@@ -53,22 +60,26 @@ public class ControllerServlet extends HttpServlet {
                                 Integer.parseInt(request.getParameter("id"))).get(0));
                         getServletContext().setAttribute("attachments", af.findMessageId(
                                 Integer.parseInt(request.getParameter("id"))));
+                    } else {
+                        getServletContext().removeAttribute("actions");
+                        getServletContext().removeAttribute("mail");
+                        getServletContext().removeAttribute("attachments");
                     }
                     break;
                 }
                 case ("/send"): {
-                    new SendEmailWithAttachments(request, "RE: ", ef, af);
-                    response.sendRedirect("");
+                    sendEmailWithAttachments(request, "");
+                    response.sendRedirect("showmail");
                     return;
                 }
                 case ("/sendreply"): {
-                    new SendEmailWithAttachments(request, "RE: ", ef, af);
-                    response.sendRedirect("");
+                    sendEmailWithAttachments(request, "RE: "); 
+                    response.sendRedirect("showmail");
                     break;
                 }
                 case ("/sendforward"): {
-                    new SendEmailWithAttachments(request, "FWD: ", ef, af);
-                    response.sendRedirect("");
+                    sendEmailWithAttachments(request, "FW: "); 
+                    response.sendRedirect("showmail");
                     break;
                 }
                 case ("/forward"): {
@@ -124,8 +135,49 @@ public class ControllerServlet extends HttpServlet {
             getServletContext().removeAttribute("actions");
         }
     }
-
-   
+    private void sendEmailWithAttachments(HttpServletRequest request, String subject) throws ServletException, Exception {
+        SendEmail se = new SendEmail();
+        if (!ServletFileUpload.isMultipartContent(request)) {
+            throw new ServletException("Content type is not multipart/form-data");
+        }
+        DiskFileItemFactory fileFactory = new DiskFileItemFactory();
+        File filesDir = new File("D:\\projecten\\Attachments\\temp\\");
+        fileFactory.setRepository(filesDir);
+        ServletFileUpload uploader = new ServletFileUpload(fileFactory);
+        ArrayList<String> attachmentNames = new ArrayList<>();
+        String message = "";
+        String to = "";
+        Email email = null;
+        List<FileItem> fileItemsList = uploader.parseRequest(request);
+        for (FileItem fileItem : fileItemsList) {
+            if (fileItem.isFormField()) {
+                String fieldname = fileItem.getFieldName();
+                String fieldvalue = fileItem.getString();
+                if (fieldname.equals("to")) {
+                    to = fieldvalue;
+                } else if (fieldname.equals("message")) {
+                    message = fieldvalue;
+                } else if (fieldname.equals("subject")) {
+                    subject += fieldvalue;
+                } else if (fieldname.equals("messageid")) {
+                    email = ef.findMessageId(Integer.parseInt(fieldvalue)).get(0);
+                }
+            } else {
+                if (!fileItem.getName().equals("")) {
+                    File file = new File("D:/projecten/Attachments/temp" + File.separator + fileItem.getName());
+                    fileItem.write(file);
+                    attachmentNames.add("D:/projecten/Attachments/temp" + File.separator + fileItem.getName());
+                }
+            }
+        }
+        if (email != null) {
+            message += "\nOriginal message:\n" + email.getContent();
+            if (to.equals("")) {
+                to = email.getFromemail();
+            }
+        }
+        se.sendMessage(to, message, attachmentNames.toArray(new String[attachmentNames.size()]), subject);
+    }
 }
 
 /*
@@ -212,48 +264,3 @@ public class ControllerServlet extends HttpServlet {
  }
  }
  }*/
-
-/*
-    private void sendEmailWithAttachments(HttpServletRequest request, String subject) throws ServletException, Exception {
-        SendEmail se = new SendEmail();
-        if (!ServletFileUpload.isMultipartContent(request)) {
-            throw new ServletException("Content type is not multipart/form-data");
-        }
-        DiskFileItemFactory fileFactory = new DiskFileItemFactory();
-        File filesDir = new File("D:\\projecten\\Attachments\\temp\\");
-        fileFactory.setRepository(filesDir);
-        ServletFileUpload uploader = new ServletFileUpload(fileFactory);
-        ArrayList<String> attachmentNames = new ArrayList<>();
-        String message = "";
-        String to = "";
-        Email email = null;
-        List<FileItem> fileItemsList = uploader.parseRequest(request);
-        for (FileItem fileItem : fileItemsList) {
-            if (fileItem.isFormField()) {
-                String fieldname = fileItem.getFieldName();
-                String fieldvalue = fileItem.getString();
-                if (fieldname.equals("to")) {
-                    to = fieldvalue;
-                } else if (fieldname.equals("message")) {
-                    message = fieldvalue;
-                } else if (fieldname.equals("subject")) {
-                    subject += fieldvalue;
-                } else if (fieldname.equals("messageid")) {
-                    email = ef.findMessageId(Integer.parseInt(fieldvalue)).get(0);
-                }
-            } else {
-                if (!fileItem.getName().equals("")) {
-                    File file = new File("" + File.separator + fileItem.getName());
-                    fileItem.write(file);
-                    attachmentNames.add("" + File.separator + fileItem.getName());
-                }
-            }
-        }
-        if (email != null) {
-            message += "\nOriginal message:\n" + email.getContent();
-            if (to.equals("")) {
-                to = email.getFromemail();
-            }
-        }
-        se.sendMessage(to, message, attachmentNames.toArray(new String[attachmentNames.size()]), subject);
-    }*/
