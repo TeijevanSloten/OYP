@@ -7,7 +7,6 @@ package com.ordina.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -18,7 +17,6 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -71,8 +69,8 @@ public class Email implements Serializable {
     @Column(name = "date")
     @Temporal(TemporalType.DATE)
     private Date date;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "emailid")
-    private Set<Attachments> attachments;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "emailid")
+    private Attachments attachments;
 
     public Email() {
     }
@@ -137,11 +135,11 @@ public class Email implements Serializable {
         this.date = date;
     }
 
-    public Set<Attachments> getAttachments() {
+    public Attachments getAttachments() {
         return attachments;
     }
 
-    public void setAttachments(Set<Attachments> attachments) {
+    public void setAttachments(Attachments attachments) {
         this.attachments = attachments;
     }
 

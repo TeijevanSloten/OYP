@@ -4,13 +4,11 @@ import com.ordina.email.ReceiveMail;
 import com.ordina.email.SendEmail;
 import com.ordina.entity.Attachments;
 import com.ordina.entity.Email;
-import com.ordina.session.AttachmentsFacade;
 import com.ordina.session.EmailFacade;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -52,12 +50,12 @@ public class ControllerServlet extends HttpServlet {
         String userPath = request.getServletPath();
 
         if (userPath.equals("/sendemail")) {
-        } else if (userPath.equals("/showallmail")) {
-
+        } else if (userPath.equals("/retrievemail")) {
             saveNewMessages();
-            response.sendRedirect("");
-        } else if (userPath.equals(
-                "/showmail")) {
+            response.sendRedirect("/WEB-INF/view/showallmail.jsp");
+            return;
+        }else if (userPath.equals("/showallmail")) {
+        }else if (userPath.equals("/showmail")) {
             getServletContext().setAttribute("mail", ef.findMessageId(
                     Integer.parseInt(request.getParameter("id"))).get(0));
         } else if (userPath.equals("/send")) {
@@ -140,17 +138,17 @@ public class ControllerServlet extends HttpServlet {
                             String contentType = message.getContentType();
                             if (contentType.contains("multipart")) {
                                 Multipart multiPart = (Multipart) message.getContent();
-                                Set<Attachments> att = email.getAttachments();
+                                //Set<Attachments> att = email.getAttachments();
                                 for (int i = 0; i < multiPart.getCount(); i++) {
                                     MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(i);
                                     if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
-                                       // Attachments a = new Attachments();
-                                       // a.setContenttype(part.getContentType());
-                                        //a.setFilename(part.getFileName());
-                                        //a.setFilesize(String.valueOf(part.getSize()));
-                                        //System.out.println(part.getFileName() + " | akj;flsd4=kfja;klsd4=jf;laksdj;fklaj");
+                                        Attachments a = new Attachments();
+                                        a.setContenttype(part.getContentType());
+                                        a.setFilename(part.getFileName());
+                                        a.setFilesize(String.valueOf(part.getSize()));
+                                        System.out.println(part.getFileName() + " | akj;flsd4=kfja;klsd4=jf;laksdj;fklaj");
                                         //att.add(a);
-                                        //part.saveFile("d://projecten/Attachments/test_" + part.getFileName());
+                                        part.saveFile("d://projecten/Attachments/test_" + part.getFileName());
                                     }
                                 }
                                 //email.setAttachments(att);
