@@ -1,7 +1,42 @@
 <%-- any content can be specified here e.g.: --%>
 <%@ page pageEncoding="UTF-8" %>
+<div id="spinwielWrap" ><div id="spinwiel"></div></div>
+<div id="fade"></div>
 </div>
 <script type="text/javascript" src="${initParam.jsPath}bootstrap.js"></script>
+<script type="text/javascript" src="${initParam.jsPath}spinwiel.js"></script>
+<script>
+    $(document).ready(function () {
+        var opts = {
+            lines: 10, // The number of lines to draw
+            length: 20, // The length of each line
+            width: 10, // The line thickness
+            radius: 30, // The radius of the inner circle
+            corners: 1, // Corner roundness (0..1)
+            rotate: 0, // The rotation offset
+            color: '#000', // #rgb or #rrggbb
+            speed: 1, // Rounds per second
+            trail: 60, // Afterglow percentage
+            shadow: false, // Whether to render a shadow
+            hwaccel: false, // Whether to use hardware acceleration
+            className: 'spinner', // The CSS class to assign to the spinner
+            zIndex: 2e9, // The z-index (defaults to 2000000000)
+            top: 120, // Top position relative to parent in px
+            left: 150 // Left position relative to parent in px
+        };
+
+
+        $('#refresh').on('click', function () {
+
+            $('#spinwielWrap').fadeIn();
+            $('#fade').css({'filter': 'alpha(opacity=80)'}).fadeIn();
+            var target = document.getElementById('spinwiel');
+            var spinner = new Spinner(opts).spin(target);
+        });
+
+
+    });
+</script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-beta.3/js/select2.min.js"></script>
 </body>
 </html>

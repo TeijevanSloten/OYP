@@ -41,7 +41,6 @@
             .profile-img {
                 height: 50px;
             }
-
             .gly-flip-horizontal {
                 filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1);
                 -webkit-transform: scale(-1, 1);
@@ -50,7 +49,34 @@
                 -o-transform: scale(-1, 1);
                 transform: scale(-1, 1);
             }
+            #fade {
+                display             : none;
+                background          : #000;
+                position            : fixed;
+                left                : 0;
+                top                 : 0;
+                width               : 100%;
+                height              : 100%;
+                opacity             : .20;
+                z-index             : 9999;
+            }
 
+            #spinwielWrap {
+                background-color    : #00ffffff;
+                height              : 300px;
+                width               : 300px;
+                display             : none;
+                padding-bottom      : 26px;
+                float               : left;
+                position            : fixed; 
+                top:50%;
+                left:50%;
+                margin:-100px 0 0 -150px;
+            }
+            #spinwiel {
+                position: absolute; 
+                top: -100px;
+            }
         </style>
     </head>
     <body>
@@ -70,52 +96,52 @@
                 </div>
                 <div id="navbar" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
-                             <c:if test="${actions == 'default'}">
-                                 <li>
-                                    <a href="sendemail" class="menuitem">
-                                        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true" ></span>
-                                        New
-                                    </a>
-                                </li>  
-                            </c:if>
-                            <c:if test="${actions == 'viewemail'}">
-                                <li>
-                                    <a href="sendemail" class="menuitem">
-                                        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true" ></span>
-                                        New
-                                    </a>
-                                </li>
-                                <li><a href="${pageContext.request.contextPath}/forward?id=${mail.getMessageid()}" class="menuitem">
-                                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true" ></span>
-                                        Forward
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="${pageContext.request.contextPath}/reply?id=${mail.getMessageid()}" class="menuitem">
-                                        <span class="glyphicon glyphicon-share-alt gly-flip-horizontal" aria-hidden="true" ></span>
-                                        Reply
-                                    </a>
-                                </li>
-                            </c:if>
-                            <c:if test="${actions == 'compose'}">
-                                <li>
-                                    <a href="#" class="menuitem" onclick='$( "form" ).submit()'>
-                                        <span class="glyphicon glyphicon-send" aria-hidden="true" ></span>
-                                        Send
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="menuitem" onclick="myFunction()">
-                                        <span class="glyphicon glyphicon-paperclip" aria-hidden="true" ></span>
-                                        Insert
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="${pageContext.request.contextPath}/showmail" class="menuitem">
-                                        Cancel
-                                    </a>
-                                </li>
-                            </c:if>
+                        <c:if test="${actions == 'default'}">
+                            <li>
+                                <a href="sendemail" class="menuitem">
+                                    <span class="glyphicon glyphicon-plus-sign" aria-hidden="true" ></span>
+                                    New
+                                </a>
+                            </li>  
+                        </c:if>
+                        <c:if test="${actions == 'viewemail'}">
+                            <li>
+                                <a href="sendemail" class="menuitem">
+                                    <span class="glyphicon glyphicon-plus-sign" aria-hidden="true" ></span>
+                                    New
+                                </a>
+                            </li>
+                            <li><a href="${pageContext.request.contextPath}/forward?id=${mail.getMessageid()}" class="menuitem">
+                                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true" ></span>
+                                    Forward
+                                </a>
+                            </li>
+                            <li>
+                                <a href="${pageContext.request.contextPath}/reply?id=${mail.getMessageid()}" class="menuitem">
+                                    <span class="glyphicon glyphicon-share-alt gly-flip-horizontal" aria-hidden="true" ></span>
+                                    Reply
+                                </a>
+                            </li>
+                        </c:if>
+                        <c:if test="${actions == 'compose'}">
+                            <li>
+                                <a href="#" class="menuitem" onclick='$("form").submit()'>
+                                    <span class="glyphicon glyphicon-send" aria-hidden="true" ></span>
+                                    Send
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="menuitem" onclick="myFunction()">
+                                    <span class="glyphicon glyphicon-paperclip" aria-hidden="true" ></span>
+                                    Insert
+                                </a>
+                            </li>
+                            <li>
+                                <a href="${pageContext.request.contextPath}/showmail" class="menuitem">
+                                    Cancel
+                                </a>
+                            </li>
+                        </c:if>
                     </ul>
                     <ul class="nav navbar-nav pull-right" style="position: relative; right: -15px;">
                         <li>
@@ -128,6 +154,5 @@
                         </li>
                     </ul>
                 </div>
-            </div>
         </nav>
         <div class="container-fluid" style="margin-top: 55px">   
