@@ -47,53 +47,18 @@
         <div class="form-group">
             <input class="" placeholder="Add a Subject" type="text" name="subject" style="font-size: 24px;border:0;border-bottom: 1px solid #ccc;width: 100%; margin-top: 15px;"><br>
         </div>
+        <div id="attachmentbutton"></div>
         <div class="form-group">
             <textarea placeholder="Add a message here."  id="textareaInput" class="form-control" style="" rows="10" name="message"></textarea> <br>
         </div>
-        <div class="form-group">
-            <input type="file" name="attachment[1]"> <br>
-            <div id="attachmentbutton"></div>
-        </div>
     </div>
 </form>
-<!--
-<div class="col-md-6 col-md-offset-3">
-    <h1>Compose email:</h1>
-    <hr>
-    <form action="send" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label class="label label-primary" for="emailInput">To:</label><br>
-            <input id="emailInput" class="form-control" placeholder="email" type="text" name="to">
-        </div>
-        <div class="form-group">
-            <label class="label label-primary" for="emailInput">CC:</label><br>
-            <input id="emailInputCC" class="form-control" placeholder="email" type="text" name="CC">
-        </div>
-        <div class="form-group">
-            <label class="label label-primary" for="emailInput">BCC:</label><br>
-            <input id="emailInputBCC" class="form-control" placeholder="email" type="text" name="BCC">
-        </div>
-        <div class="form-group">
-            <label  class="label label-primary" for="subjectInput">Subject:</label><br>
-            <input id="subjectInput" class="form-control" placeholder="Subject" type="text" name="subject"><br>
-        </div>
-        <div class="form-group">
-            <label class="label label-primary" for="textareaInput">Message:</label><br>
-            <textarea placeholder="Type message here"  id="textareaInput" class="form-control" style="" rows="10" name="message"></textarea> <br>
-        </div>
-        <div class="form-group">
-            <input type="file" name="attachment[1]"> <br>
-            <button type="button" class="btn btn-primary" onclick="myFunction()" id="attachmentbutton">Add New Attachment</button><br>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-danger" >Submit</button>
-        </div>
-    </form>
-</div>-->
 <script>
-    var attachmentsint = 2;
+    var attachmentsint = 1;
     function myFunction() {
-        $("#attachmentbutton").before('<input type="file" name="attachment[' + attachmentsint + ']"><br>');
+        $("#attachmentbutton").before(
+                '<span style="display: inline; width: 300px;">' + 
+                '<input type="file" name="attachment[' + attachmentsint + ']"><div>remove</div></span><br>');
         attachmentsint++;
     }
     $(document).ready(function () {
@@ -115,6 +80,5 @@
             placeholder: "BCC",
             tokenSeparators: [',', ' ']
         });
-        
     });
 </script>
