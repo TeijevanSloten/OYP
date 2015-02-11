@@ -42,7 +42,12 @@
 
     <div class="col-md-9" style="padding-left: 0;">
         <c:if test="${mail != null}">
-            <h2 class="title"> <c:out value="${mail.getSubject()}"></c:out></h2>
+            <h2 class="title"> 
+                <c:out value="${mail.getSubject()}"></c:out>
+                 <c:if test="${mail.getSubject() == null}">
+                     &nbsp;
+                 </c:if>
+            </h2>
             <div class="row mail-header">
                 <div class="col-md-1">
                     <span class="badge">From: </span> 
@@ -64,7 +69,7 @@
                     <span class="badge">Sent: </span> 
                 </div>
                 <div class="col-md-11">
-                    ${mail.getDate()}
+                    ${mail.getSimpleDate()}
                 </div>
             </div>
             <c:if test="${attachments.size() > 0}">
