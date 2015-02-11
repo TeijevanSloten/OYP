@@ -74,9 +74,9 @@
                     </div>
                     <div class="col-md-11">
                         <c:forEach var="attachment" items="${attachments}">
-                            <a href="D:/projecten/Attachments/${attachment.getEmailid()}-${attachment.getFilename()}" target="_blank">
-                                ${attachment.getFilename()}
-                            </a> 
+                           
+                            <a href="${pageContext.request.contextPath}/download?id=${mail.getMessageid()}-${attachment.getFilename()}">${attachment.getFilename()}</a>      
+                              
                         </c:forEach>
                     </div>
                 </div>

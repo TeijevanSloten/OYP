@@ -30,7 +30,9 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
     "/reply",
     "/send",
     "/sendforward",
-    "/sendreply"
+    "/sendreply",
+    "/download"
+    
 })
 public class ControllerServlet extends HttpServlet {
 
@@ -105,6 +107,7 @@ public class ControllerServlet extends HttpServlet {
                             addressesf.findAll());
                     break;
                 }
+
             }
             request.getRequestDispatcher("/WEB-INF/view/" + userPath + ".jsp").forward(request, response);
 
@@ -195,87 +198,3 @@ public class ControllerServlet extends HttpServlet {
     }
 }
 
-/*
- private void sendEmailWithAttachments(HttpServletRequest request) throws ServletException, Exception {
-        //sendEmailWithAttachments(request, "");
-    }
-
- if (userPath.equals("/retrievemail")) {
-                
- return;
- } else if (userPath.equals(
- "/showallmail")) {
- getServletContext().setAttribute("messages", ef.findAll());
- } else if (userPath.equals(
- "/showmail")) {
- getServletContext().setAttribute("mail", ef.findMessageId(
- Integer.parseInt(request.getParameter("id"))).get(0));
- getServletContext().setAttribute("attachments", af.findMessageId(
- Integer.parseInt(request.getParameter("id"))));
- } else if (userPath.equals("/send")) {
- sendEmailWithAttachments(request);
- response.sendRedirect("");
- return;
- } else if (userPath.equals("/sendreply")) {
- sendEmailWithAttachments(request, "RE: ");
- response.sendRedirect("");
- } else if (userPath.equals("/sendforward")) {
- sendEmailWithAttachments(request, "FWD: ");
- response.sendRedirect("");
- } else if (userPath.equals(
- "/forward")) {
- getServletContext().setAttribute("mail",
- ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
- } else if (userPath.equals(
- "/reply")) {
- getServletContext().setAttribute("mail",
- ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
- }
- System.out.println(System.getProperty("user.dir"));
-
- try {
- request.getRequestDispatcher("/WEB-INF/view/" + userPath + ".jsp").forward(request, response);
- } catch (Exception ex) {
- ex.printStackTrace();
- }
- } catch (IOException ex) {
- Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
- } catch (Exception ex) {
- Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
- }
- }
- */
-/*private void saveNewMessages() {
- ArrayList<Message> messages = new ReceiveMail().receiveMessages();
- for (Message message : messages) {
- try {
- if (ef.findMessageId(message.getMessageNumber()).size() <= 0) {
- Email email = new Email();
- email.setMessageid(message.getMessageNumber());
- email.setSubject(message.getSubject());
- email.setContent(message.getContent().toString());
- email.setFromemail(message.getFrom()[0].toString());
- email.setDate(message.getReceivedDate());
- ef.create(email);
- String contentType = message.getContentType();
- if (contentType.contains("multipart")) {
- Multipart multiPart = (Multipart) message.getContent();
- for (int i = 0; i < multiPart.getCount(); i++) {
- MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(i);
- if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
- Attachments attachment = new Attachments();
- attachment.setContenttype(part.getContentType());
- attachment.setFilename(part.getFileName());
- attachment.setFilesize(String.valueOf(part.getSize()));
- attachment.setEmailid(email.getMessageid());
- af.create(attachment);
- part.saveFile("D:\\projecten\\Attachments\\" + email.getMessageid() + "-" + part.getFileName());
- }
- }
- }
- }
- } catch (MessagingException | IOException ex) {
- Logger.getLogger(ControllerServlet.class.getName()).log(Level.SEVERE, null, ex);
- }
- }
- }*/
