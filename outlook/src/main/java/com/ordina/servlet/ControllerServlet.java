@@ -89,12 +89,16 @@ public class ControllerServlet extends HttpServlet {
                 }
                 case ("/forward"): {
                     setActions("compose");
+                    getServletContext().setAttribute("addresses",
+                            addressesf.findAll());
                     getServletContext().setAttribute("mail",
                             ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
                     break;
                 }
                 case ("/reply"): {
                     setActions("compose");
+                    getServletContext().setAttribute("addresses",
+                            addressesf.findAll());
                     getServletContext().setAttribute("mail",
                             ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
                     break;
