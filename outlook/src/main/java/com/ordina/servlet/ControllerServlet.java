@@ -40,6 +40,8 @@ public class ControllerServlet extends HttpServlet {
 
     public void init() throws ServletException {
         getServletContext().setAttribute("messages", ef.findAllByDate());
+        ef.findAllByDate();
+        
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -147,6 +149,8 @@ public class ControllerServlet extends HttpServlet {
         ArrayList<String> attachmentNames = new ArrayList<>();
         String message = "";
         String to = "";
+        String cc = "";
+        String bcc ="";
         Email email = null;
         List<FileItem> fileItemsList = uploader.parseRequest(request);
         for (FileItem fileItem : fileItemsList) {
@@ -155,6 +159,10 @@ public class ControllerServlet extends HttpServlet {
                 String fieldvalue = fileItem.getString();
                 if (fieldname.equals("to")) {
                     to = fieldvalue;
+                } else if (fieldname.equals("CC")){
+                    cc = fieldvalue;
+                 } else if (fieldname.equals("BCC")){
+                    bcc = fieldvalue;
                 } else if (fieldname.equals("message")) {
                     message = fieldvalue;
                 } else if (fieldname.equals("subject")) {
@@ -176,7 +184,7 @@ public class ControllerServlet extends HttpServlet {
                 to = email.getFromemail();
             }
         }
-        se.sendMessage(to, message, attachmentNames.toArray(new String[attachmentNames.size()]), subject);
+        se.sendMessage(to, cc, bcc, message, attachmentNames.toArray(new String[attachmentNames.size()]), subject);
     }
 }
 

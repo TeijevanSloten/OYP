@@ -44,18 +44,27 @@ public class SendEmail {
         this.replyto = replyto;
     }
 
-    public boolean sendMessage(String to, String body, String[] attachFiles, String subject) {
+    public boolean sendMessage(String to, String cc, String bcc, String body, String[] attachFiles, String subject) {
         try {
             Message message = new MimeMessage(session);
+            InternetAddress[] myCcList = InternetAddress.parse(cc);
+            InternetAddress[] myToList = InternetAddress.parse(to);
+            InternetAddress[] myBccList = InternetAddress.parse(bcc);
             if (this.replyto != null) {
+
                 message = (MimeMessage) message.reply(false);
                 message.setFrom(new InternetAddress(replyto.getFromemail()));
+                message.setRecipients(Message.RecipientType.TO, myToList);
+                message.setRecipients(Message.RecipientType.CC, myCcList);
+                message.setRecipients(Message.RecipientType.BCC, myBccList);
                 message.setText("Replied message");
                 message.setReplyTo(new InternetAddress[]{new InternetAddress(replyto.getFromemail())});
             }
             message.setFrom(new InternetAddress(SMV.email));
             message.setRecipients(Message.RecipientType.TO,
-                    InternetAddress.parse(to));
+                    myToList);
+            message.setRecipients(Message.RecipientType.CC, myCcList);
+            message.setRecipients(Message.RecipientType.BCC, myBccList);
             message.setSubject(subject);
             message.setSentDate(new Date());
 

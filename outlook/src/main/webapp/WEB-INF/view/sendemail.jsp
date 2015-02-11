@@ -6,7 +6,15 @@
     <form action="send" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label class="label label-primary" for="emailInput">To:</label><br>
-            <input id="emailInput" class="form-control" placeholder="email" type="email" name="to">
+            <input id="emailInput" class="form-control" placeholder="email" type="text" name="to">
+        </div>
+        <div class="form-group">
+            <label class="label label-primary" for="emailInput">CC:</label><br>
+            <input id="emailInputCC" class="form-control" placeholder="email" type="text" name="CC">
+        </div>
+        <div class="form-group">
+            <label class="label label-primary" for="emailInput">BCC:</label><br>
+            <input id="emailInputBCC" class="form-control" placeholder="email" type="text" name="BCC">
         </div>
         <div class="form-group">
             <label  class="label label-primary" for="subjectInput">Subject:</label><br>
