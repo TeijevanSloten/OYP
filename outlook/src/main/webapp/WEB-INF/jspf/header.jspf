@@ -50,25 +50,25 @@
                 transform: scale(-1, 1);
             }
             #fade {
-                display             : none;
-                background          : #000;
-                position            : fixed;
-                left                : 0;
-                top                 : 0;
-                width               : 100%;
-                height              : 100%;
-                opacity             : .20;
-                z-index             : 9999;
+                display: none;
+                background: #000;
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                opacity: .20;
+                z-index: 9999;
             }
 
             #spinwielWrap {
-                background-color    : #00ffffff;
-                height              : 300px;
-                width               : 300px;
-                display             : none;
-                padding-bottom      : 26px;
-                float               : left;
-                position            : fixed; 
+                background-color: #00ffffff;
+                height: 300px;
+                width: 300px;
+                display: none;
+                padding-bottom: 26px;
+                float: left;
+                position: fixed; 
                 top:50%;
                 left:50%;
                 margin:-100px 0 0 -150px;
@@ -76,6 +76,9 @@
             #spinwiel {
                 position: absolute; 
                 top: -100px;
+            }
+            .dropdown-toggle:focus {
+                background: #025A9B!important;
             }
         </style>
     </head>
@@ -144,13 +147,17 @@
                         </c:if>
                     </ul>
                     <ul class="nav navbar-nav pull-right" style="position: relative; right: -15px;">
-                        <li>
-                            <a href="#" class="menuitem">
+                        <li class="dropdown">
+                            <a href="#" class="menuitem dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true" style="margin:0; padding:0; padding-left: 15px;">
                                 Pipo de Cloun
+                                <img src="${initParam.imgPath}profile_icon.jpg" class="profile-img" style="padding-left: 10px;">
                             </a>
-                        </li>
-                        <li style="height: 50px;">
-                            <img src="${initParam.imgPath}profile_icon.jpg" class="profile-img">
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="addressbook">
+                                       <span class="glyphicon glyphicon-book" aria-hidden="true" ></span> 
+                                        Addressbook
+                                    </a></li>
+                            </ul>
                         </li>
                     </ul>
                 </div>
