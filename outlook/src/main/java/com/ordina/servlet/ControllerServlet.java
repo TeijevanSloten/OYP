@@ -3,6 +3,7 @@ package com.ordina.servlet;
 import com.ordina.email.SaveEmailAndAttachments;
 import com.ordina.email.SendEmail;
 import com.ordina.entity.Email;
+import com.ordina.session.AddressesFacade;
 import com.ordina.session.AttachmentsFacade;
 import com.ordina.session.EmailFacade;
 import java.io.File;
@@ -37,6 +38,8 @@ public class ControllerServlet extends HttpServlet {
     private EmailFacade ef;
     @EJB
     private AttachmentsFacade af;
+    @EJB
+    private AddressesFacade addressesf;
 
     public void init() throws ServletException {
         getServletContext().setAttribute("messages", ef.findAllByDate());
@@ -48,7 +51,7 @@ public class ControllerServlet extends HttpServlet {
             throws ServletException {
         try {
             String userPath = request.getServletPath();
-            setActions(userPath);
+            setActions("default");
             switch (userPath) {
                 case ("/retrievemail"): {
                     new SaveEmailAndAttachments(ef, af);
@@ -58,12 +61,12 @@ public class ControllerServlet extends HttpServlet {
                 }
                 case ("/showmail"): {
                     if(request.getParameter("id") != null){
+                        setActions("viewemail");
                         getServletContext().setAttribute("mail", ef.findMessageId(
                                 Integer.parseInt(request.getParameter("id"))).get(0));
                         getServletContext().setAttribute("attachments", af.findMessageId(
                                 Integer.parseInt(request.getParameter("id"))));
                     } else {
-                        getServletContext().removeAttribute("actions");
                         getServletContext().removeAttribute("mail");
                         getServletContext().removeAttribute("attachments");
                     }
@@ -85,13 +88,21 @@ public class ControllerServlet extends HttpServlet {
                     break;
                 }
                 case ("/forward"): {
+                    setActions("compose");
                     getServletContext().setAttribute("mail",
                             ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
                     break;
                 }
                 case ("/reply"): {
+                    setActions("compose");
                     getServletContext().setAttribute("mail",
                             ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
+                    break;
+                }
+                case ("/sendemail"): {
+                    setActions("compose");
+                    getServletContext().setAttribute("addresses",
+                            addressesf.findAll());
                     break;
                 }
             }
@@ -130,12 +141,8 @@ public class ControllerServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void setActions(String path){
-        if(path.equals("/showmail")){
-            getServletContext().setAttribute("actions", new String[]{"forward", "reply"});
-        } else {
-            getServletContext().removeAttribute("actions");
-        }
+    private void setActions(String option){
+            getServletContext().setAttribute("actions", option);
     }
     private void sendEmailWithAttachments(HttpServletRequest request, String subject) throws ServletException, Exception {
         SendEmail se = new SendEmail();

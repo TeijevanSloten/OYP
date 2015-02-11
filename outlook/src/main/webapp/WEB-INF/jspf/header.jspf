@@ -5,8 +5,9 @@
         <script type="text/javascript" src="${initParam.jsPath}jquery.min.js"></script>
         <link rel="stylesheet" type="text/css" href="${initParam.cssPath}bootstrap.css">
         <link rel="stylesheet" type="text/css" href="${initParam.cssPath}bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-beta.3/css/select2.min.css" />   
         <link rel="icon" href="${initParam.imgPath}OLFav.ico" type="image/x-icon">
-        <title>Oyp.com</title>
+        <title>Oyp.com - Pipo de Cloun</title>
         <style>
             .refreshbutton {
                 color: white !important;
@@ -69,28 +70,52 @@
                 </div>
                 <div id="navbar" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
-                        <li><a href="sendemail" class="menuitem">
-                                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true" ></span>
-                                New
-                            </a>
-                        </li>
-                        <c:forEach var="action" items="${actions}">
-                            <c:if test="${action == 'reply'}">
+                             <c:if test="${actions == 'default'}">
+                                 <li>
+                                    <a href="sendemail" class="menuitem">
+                                        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true" ></span>
+                                        New
+                                    </a>
+                                </li>  
+                            </c:if>
+                            <c:if test="${actions == 'viewemail'}">
+                                <li>
+                                    <a href="sendemail" class="menuitem">
+                                        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true" ></span>
+                                        New
+                                    </a>
+                                </li>
+                                <li><a href="${pageContext.request.contextPath}/forward?id=${mail.getMessageid()}" class="menuitem">
+                                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true" ></span>
+                                        Forward
+                                    </a>
+                                </li>
                                 <li>
                                     <a href="${pageContext.request.contextPath}/reply?id=${mail.getMessageid()}" class="menuitem">
-                                        <span class="glyphicon glyphicon glyphicon-share-alt gly-flip-horizontal" aria-hidden="true" ></span>
+                                        <span class="glyphicon glyphicon-share-alt gly-flip-horizontal" aria-hidden="true" ></span>
                                         Reply
                                     </a>
                                 </li>
                             </c:if>
-                            <c:if test="${action == 'forward'}">
-                                <li><a href="${pageContext.request.contextPath}/forward?id=${mail.getMessageid()}" class="menuitem">
-                                        <span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true" ></span>
-                                        Forward
+                            <c:if test="${actions == 'compose'}">
+                                <li>
+                                    <a href="#" class="menuitem" onclick='$( "form" ).submit()'>
+                                        <span class="glyphicon glyphicon-send" aria-hidden="true" ></span>
+                                        Send
                                     </a>
                                 </li>
-                            </c:if>  
-                        </c:forEach>
+                                <li>
+                                    <a href="#" class="menuitem" onclick="myFunction()">
+                                        <span class="glyphicon glyphicon-paperclip" aria-hidden="true" ></span>
+                                        Insert
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="${pageContext.request.contextPath}/showmail" class="menuitem">
+                                        Cancel
+                                    </a>
+                                </li>
+                            </c:if>
                     </ul>
                     <ul class="nav navbar-nav pull-right" style="position: relative; right: -15px;">
                         <li>
