@@ -30,7 +30,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
     "/reply",
     "/send",
     "/sendforward",
-    "/sendreply"
+    "/sendreply",
+    "/addressbook"
 })
 public class ControllerServlet extends HttpServlet {
 
