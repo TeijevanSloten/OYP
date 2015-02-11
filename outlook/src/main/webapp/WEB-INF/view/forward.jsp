@@ -51,8 +51,8 @@
         <div class="form-group">
             <textarea placeholder="Add a message here."  id="textareaInput" class="form-control" style="" rows="10" name="message"></textarea> <br>
         </div> 
-        <label>From: </label>${mail.getFromemail()} <br>
-        <label>Subject:</label> ${mail.getSubject()}<br>
+        <label>From: </label> <c:out value="${mail.getFromemail()}"></c:out> <br>
+        <label>Subject:</label>  <c:out value="${mail.getSubject()}"></c:out><br>
         <label>Message:</label><br>
         <pre>${mail.getContent()}</pre>
     </div>

@@ -42,13 +42,13 @@
 
     <div class="col-md-9" style="padding-left: 0;">
         <c:if test="${mail != null}">
-            <h2 class="title">${mail.getSubject()}</h2>
+            <h2 class="title"> <c:out value="${mail.getSubject()}"></c:out></h2>
             <div class="row mail-header">
                 <div class="col-md-1">
                     <span class="badge">From: </span> 
                 </div>
                 <div class="col-md-11">
-                    ${mail.getFromemail()}
+                    <c:out value="${mail.getFromemail()}"></c:out>
                 </div>
             </div>
             <div class="row mail-header">
@@ -56,7 +56,7 @@
                     <span class="badge">Subject: </span> 
                 </div>
                 <div class="col-md-11">
-                    ${mail.getSubject()}
+                    <c:out value="${mail.getSubject()}"></c:out>
                 </div>
             </div>
             <div class="row mail-header">
@@ -74,8 +74,8 @@
                     </div>
                     <div class="col-md-11">
                         <c:forEach var="attachment" items="${attachments}">
-                            <a href="D:/projecten/Attachments/${attachment.getEmailid()}-${attachment.getFilename()}" target="_blank">
-                                ${attachment.getFilename()}
+                            <a href="D:/projecten/Attachments/ <c:out value='${attachment.getEmailid()}'></c:out>- <c:out value='${attachment.getFilename()}'></c:out>" target="_blank">
+                                <c:out value="${attachment.getFilename()}"></c:out>
                             </a> 
                         </c:forEach>
                     </div>
