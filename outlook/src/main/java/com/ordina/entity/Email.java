@@ -127,7 +127,7 @@ public class Email implements Serializable {
     public Date getDate() {
         return date;
     }
-    
+
     public String getSimpleDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yy");
         return dateFormat.format(date);

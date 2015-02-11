@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -44,11 +45,34 @@ public class SaveEmailAndAttachments {
         Email email = new Email();
         email.setMessageid(message.getMessageNumber());
         email.setSubject(message.getSubject());
-        email.setContent(message.getContent().toString());
+        try{
+            email.setContent(getStringContentEmail(message));
+        }catch (MessagingException e){
+            System.out.println("Exception in get Strign ContentEmail");
+        }
         email.setFromemail(message.getFrom()[0].toString());
         email.setDate(message.getReceivedDate());
         ef.create(email);
         checkForAndLoopThroughAttachments(message, email);
+    }
+
+    String getStringContentEmail(Message message) throws IOException, MessagingException {
+        String s = "This email has no content...";
+        String contentType = message.getContentType();
+        
+        if (contentType.contains("multipart")) {
+            Multipart multipart = (Multipart) message.getContent();
+            for (int i = 0; i < multipart.getCount(); i++) {
+                BodyPart bodyPart = multipart.getBodyPart(i);
+                if (bodyPart.isMimeType("text/*")) {
+                    s = (String) bodyPart.getContent().toString();
+                }
+            }
+        } else {
+            s = message.getContent().toString();
+        }
+        
+        return s;
     }
 
     private void checkForAndLoopThroughAttachments(Message message, Email email) throws MessagingException, IOException {

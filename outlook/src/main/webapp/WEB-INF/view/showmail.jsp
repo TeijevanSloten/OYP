@@ -33,7 +33,7 @@
                 <a href="showmail?id=${email.getMessageid()}" style="color: black; text-decoration: none;">
                     <li class="list-group-item email-list">
                         <span class="pull-right" >${email.getSimpleDate()}</span>
-                        &nbsp; ${email.getSubject()}
+                        &nbsp; <c:out value="${email.getSubject()}"></c:out>
                     </li>
                 </a>
             </c:forEach>
@@ -81,7 +81,9 @@
                     </div>
                 </div>
             </c:if>
+
             <pre style="min-height: 100px !important">${mail.getContent()}</pre>
+
         </c:if>
         <c:if test="${mail == null}">
             <h2>

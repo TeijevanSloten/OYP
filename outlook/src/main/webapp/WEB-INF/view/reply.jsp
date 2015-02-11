@@ -7,7 +7,7 @@
     <form action="send" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label class="label label-primary" for="emailInput">To:</label><br>
-            <input id="emailInput" class="form-control" type="email" name="toempty" value="${mail.getFromemail()}" readonly>
+            <input id="emailInput" class="form-control" type="email" name="toempty" value="${mail.getFromemail()}"  readonly>
         </div>
         <div class="form-group">
             <label  class="label label-primary" for="subjectInput">Subject:</label><br>
