@@ -40,6 +40,8 @@ public class ControllerServlet extends HttpServlet {
 
     public void init() throws ServletException {
         getServletContext().setAttribute("messages", ef.findAllByDate());
+        ef.findAllByDate();
+        
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
