@@ -89,7 +89,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand refreshbutton" href="retrievemail">
+                    <a class="navbar-brand refreshbutton" href="retrievemail" id="refresh">
                         <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>                        
                     </a>
                     <a class="navbar-brand logo" href="showmail" style="font-weight: 100">Oyp.com</a>
