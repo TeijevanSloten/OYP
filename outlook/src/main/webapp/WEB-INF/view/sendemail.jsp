@@ -49,7 +49,7 @@
         </div>
         <div id="attachmentbutton"></div>
         <div class="form-group">
-            <textarea placeholder="Add a message here."  id="textareaInput" class="form-control" style="" rows="10" name="message"></textarea> <br>
+            <textarea placeholder="Add a message here."  id="textareaInput" class="form-control" style="" rows="20" name="message"></textarea> <br>
         </div>
     </div>
 </form>

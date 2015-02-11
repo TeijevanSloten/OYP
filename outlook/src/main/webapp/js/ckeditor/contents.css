@@ -14,7 +14,7 @@ body
 
 	/* Remove the background color to make it transparent */
 	background-color: #fff;
-
+        
 	margin: 20px;
 }
 
@@ -133,7 +133,7 @@ a > img {
 	outline: 1px solid #0782C1;
 }
 
-#cke_1_bottom {
+#cke_1_path_label {
         background: black !important;
     
 }

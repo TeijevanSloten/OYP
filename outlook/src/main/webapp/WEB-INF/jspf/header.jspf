@@ -80,6 +80,12 @@
             .dropdown-toggle:focus {
                 background: #025A9B!important;
             }
+            
+            #textareaInput {
+                height : 600px; 
+                
+                
+            }
         </style>
     </head>
     <body>
