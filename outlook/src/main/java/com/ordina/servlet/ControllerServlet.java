@@ -9,6 +9,7 @@ import com.ordina.session.AttachmentsFacade;
 import com.ordina.session.EmailFacade;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -35,7 +36,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
     "/download",
     "/addressbook",
     "/addressbook",
-    "/address"
+    "/address",
+    "/exportaddresses"
 })
 public class ControllerServlet extends HttpServlet {
 
@@ -120,12 +122,18 @@ public class ControllerServlet extends HttpServlet {
                             addressesf.findAll());
                     break;
                 }
-                case("/address"): {
+                case ("/address"): {
                     Addresses address = new Addresses();
                     address.setEmail(request.getParameter("email"));
                     address.setName(request.getParameter("fullname"));
                     addressesf.create(address);
                     response.sendRedirect("addressbook");
+                    return;
+                }
+                case ("/exportaddresses"): {
+                    try (PrintWriter out = response.getWriter()) {
+                        out.println(wrapJsonAddresses(addressesf.findAll()));
+                    }
                     return;
                 }
             }
@@ -218,6 +226,13 @@ public class ControllerServlet extends HttpServlet {
         se.sendMessage(to, cc, bcc, message, attachmentNames.toArray(new String[attachmentNames.size()]), subject);
     }
 
+    public static String wrapJsonAddresses(List<Addresses> addresses) {
+        String json = "{\"addresses\":[\n";
+        for (Addresses address : addresses) {
+            json += "\t{\"fullname\":\"" + address.getName() + "\", \"email\":\"" + address.getEmail() + "\"},\n";
+        }
+        json = json.substring(0, json.length() - 2) + "\n]";
+        return json;
+    }
+
 }
-
-

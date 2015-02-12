@@ -159,7 +159,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#" class="menuitem" onclick="myFunction()">
+                                <a href="exportaddresses" class="menuitem" onclick="myFunction()">
                                     <span class="glyphicon glyphicon-save-file" aria-hidden="true" ></span>
                                     Export
                                 </a>

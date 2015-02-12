@@ -11,5 +11,4 @@
     out.write(i);   
   }   
   fileInputStream.close();   
-%>   trery
-
+%>
