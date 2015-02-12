@@ -24,6 +24,15 @@
     .mail-header {
         margin-bottom: 10px;
     }
+    
+    #mail-text {
+        border: 1px solid #ccc;
+        background: white;
+        overflow: auto;
+        min-height: 100px !important
+    }
+    
+    
 </style>
 <div class="row">
     <div class="col-md-3">
@@ -85,8 +94,9 @@
                     </div>
                 </div>
             </c:if>
-
-            <pre style="min-height: 100px !important">${mail.getContent()}</pre>
+                
+                
+             <pre id="mail-text" >${mail.getContent()}</pre> 
 
         </c:if>
         <c:if test="${mail == null}">

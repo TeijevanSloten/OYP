@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
+import javax.json.JsonObject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -132,7 +133,9 @@ public class ControllerServlet extends HttpServlet {
                 }
                 case ("/exportaddresses"): {
                     try (PrintWriter out = response.getWriter()) {
-                        out.println(wrapJsonAddresses(addressesf.findAll()));
+                      // JsonObject obj = new JsonObject();
+                               
+                               out.println(wrapJsonAddresses(addressesf.findAll()));
                     }
                     return;
                 }
@@ -234,5 +237,7 @@ public class ControllerServlet extends HttpServlet {
         json = json.substring(0, json.length() - 2) + "\n]";
         return json;
     }
+    
+    
 
 }
