@@ -9,11 +9,13 @@ import com.ordina.session.AttachmentsFacade;
 import com.ordina.session.EmailFacade;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
+import javax.json.JsonObject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -34,10 +36,10 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
     "/sendreply",
     "/download",
     "/addressbook",
-    "/addressbook",
     "/deleteaddress",
-    "/address"
-        
+    "/address",
+    "/exportaddresses",
+    "/agenda"
 })
 public class ControllerServlet extends HttpServlet {
 
@@ -138,7 +140,18 @@ public class ControllerServlet extends HttpServlet {
                     response.sendRedirect("addressbook");
                     
                 }
-
+                case ("/exportaddresses"): {
+                    try (PrintWriter out = response.getWriter()) {
+                      // JsonObject obj = new JsonObject();
+                               
+                               out.println(wrapJsonAddresses(addressesf.findAll()));
+                    }
+                    return;
+                }
+                case ("/agenda"): {
+                    setActions("agenda");
+                    break;
+                }
             }
             request.getRequestDispatcher("/WEB-INF/view/" + userPath + ".jsp").forward(request, response);
 
@@ -229,4 +242,12 @@ public class ControllerServlet extends HttpServlet {
         se.sendMessage(to, cc, bcc, message, attachmentNames.toArray(new String[attachmentNames.size()]), subject);
     }
 
+    public static String wrapJsonAddresses(List<Addresses> addresses) {
+        String json = "{\"addresses\":[\n";
+        for (Addresses address : addresses) {
+            json += "\t{\"fullname\":\"" + address.getName() + "\", \"email\":\"" + address.getEmail() + "\"},\n";
+        }
+        json = json.substring(0, json.length() - 2) + "\n]";
+        return json;
+    }
 }

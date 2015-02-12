@@ -159,9 +159,23 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#" class="menuitem" onclick="myFunction()">
+                                <a href="exportaddresses" class="menuitem" onclick="myFunction()">
                                     <span class="glyphicon glyphicon-save-file" aria-hidden="true" ></span>
                                     Export
+                                </a>
+                            </li>
+                        </c:if>
+                        <c:if test="${actions == 'agenda'}">
+                            <li>
+                                <a href="#" class="menuitem" onclick='$("form").submit()'>
+                                    <span class="glyphicon glyphicon-plus-sign" aria-hidden="true" ></span>
+                                    New
+                                </a>
+                            </li>
+                            <li>
+                                <a href="exportaddresses" class="menuitem" onclick="myFunction()">
+                                    <span class="glyphicon glyphicon-import" aria-hidden="true" ></span>
+                                    Invite
                                 </a>
                             </li>
                         </c:if>
@@ -173,10 +187,18 @@
                                 <img src="${initParam.imgPath}profile_icon.jpg" class="profile-img" style="padding-left: 10px;">
                             </a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="addressbook">
+                                <li role="presentation">
+                                    <a role="menuitem" tabindex="-1" href="addressbook">
                                         <span class="glyphicon glyphicon-book" aria-hidden="true" ></span> 
                                         Addressbook
-                                    </a></li>
+                                    </a>
+                                </li>
+                                <li role="presentation">
+                                    <a role="menuitem" tabindex="-1" href="agenda">
+                                        <span class="glyphicon glyphicon-calendar" aria-hidden="true" ></span> 
+                                        Agenda
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                     </ul>
