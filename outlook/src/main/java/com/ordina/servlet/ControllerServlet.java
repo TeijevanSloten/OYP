@@ -38,7 +38,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
     "/addressbook",
     "/addressbook",
     "/address",
-    "/exportaddresses"
+    "/exportaddresses",
+    "/agenda"
 })
 public class ControllerServlet extends HttpServlet {
 
@@ -138,6 +139,10 @@ public class ControllerServlet extends HttpServlet {
                                out.println(wrapJsonAddresses(addressesf.findAll()));
                     }
                     return;
+                }
+                case ("/agenda"): {
+                    setActions("agenda");
+                    break;
                 }
             }
             request.getRequestDispatcher("/WEB-INF/view/" + userPath + ".jsp").forward(request, response);
