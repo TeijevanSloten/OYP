@@ -75,5 +75,8 @@
             placeholder: "BCC",
             tokenSeparators: [',', ' ']
         });
+        
+            CKEDITOR.config.height = 600;    
+            CKEDITOR.replace('textareaInput');
     });
 </script>
