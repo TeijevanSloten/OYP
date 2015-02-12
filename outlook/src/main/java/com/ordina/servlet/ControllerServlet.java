@@ -32,13 +32,10 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
     "/send",
     "/sendforward",
     "/sendreply",
-<<<<<<< HEAD
     "/download",
-    "/addressbook"
-=======
+    "/addressbook",
     "/addressbook",
     "/address"
->>>>>>> 4c806be91e5215fac91415f493d750ac6e55e95d
 })
 public class ControllerServlet extends HttpServlet {
 
@@ -117,9 +114,6 @@ public class ControllerServlet extends HttpServlet {
                             addressesf.findAll());
                     break;
                 }
-<<<<<<< HEAD
-
-=======
                 case ("/addressbook"): {
                     setActions("addresses");
                     getServletContext().setAttribute("addresses",
@@ -134,7 +128,6 @@ public class ControllerServlet extends HttpServlet {
                     response.sendRedirect("addressbook");
                     return;
                 }
->>>>>>> 4c806be91e5215fac91415f493d750ac6e55e95d
             }
             request.getRequestDispatcher("/WEB-INF/view/" + userPath + ".jsp").forward(request, response);
 
@@ -224,9 +217,7 @@ public class ControllerServlet extends HttpServlet {
         }
         se.sendMessage(to, cc, bcc, message, attachmentNames.toArray(new String[attachmentNames.size()]), subject);
     }
-<<<<<<< HEAD
+
 }
 
-=======
-}
->>>>>>> 4c806be91e5215fac91415f493d750ac6e55e95d
+
