@@ -35,7 +35,9 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
     "/download",
     "/addressbook",
     "/addressbook",
+    "/deleteaddress",
     "/address"
+        
 })
 public class ControllerServlet extends HttpServlet {
 
@@ -118,9 +120,10 @@ public class ControllerServlet extends HttpServlet {
                     setActions("addresses");
                     getServletContext().setAttribute("addresses",
                             addressesf.findAll());
+
                     break;
                 }
-                case("/address"): {
+                case ("/address"): {
                     Addresses address = new Addresses();
                     address.setEmail(request.getParameter("email"));
                     address.setName(request.getParameter("fullname"));
@@ -128,6 +131,14 @@ public class ControllerServlet extends HttpServlet {
                     response.sendRedirect("addressbook");
                     return;
                 }
+                case ("/deleteaddress"): {
+                    System.out.println("voor werkt nog");
+                        addressesf.remove(addressesf.find(Integer.parseInt(request.getParameter("id"))));
+                        System.out.println("na werk ook nog");
+                    response.sendRedirect("addressbook");
+                    
+                }
+
             }
             request.getRequestDispatcher("/WEB-INF/view/" + userPath + ".jsp").forward(request, response);
 
@@ -219,5 +230,3 @@ public class ControllerServlet extends HttpServlet {
     }
 
 }
-
-

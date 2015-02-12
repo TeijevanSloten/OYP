@@ -79,7 +79,7 @@
                     </div>
                     <div class="col-md-11">
                         <c:forEach var="attachment" items="${attachments}">
-                            <a href="${pageContext.request.contextPath}/download?id=${mail.getMessageid()}-${attachment.getFilename()}">${attachment.getFilename()}</a>      
+                            <a href="${pageContext.request.contextPath}/download?id=${mail.getMessageid()}-${attachment.getFilename()}">${attachment.getFilename()}</a>   
 
                         </c:forEach>
                     </div>

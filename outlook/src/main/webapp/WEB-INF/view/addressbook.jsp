@@ -33,8 +33,24 @@
                 <tr>
                     <th scope="row">${address.getName()}</th>
                     <td>${address.getEmail()}</td>
+                    <td>
+                        <a  class="btn btn-danger" href="${pageContext.request.contextPath}/deleteaddress?id=${address.getId()}" onclick="return removeAddress()"/>     
+                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+             </a>
+                    </td>
                 </tr>
              </c:forEach>
       </tbody>
     </table>
 </div>
+
+
+<script>
+    function removeAddress(){
+        return confirm("Weet u zeker dat u dit adres wilt verwijderen?");
+        
+    }
+    
+    
+</script>
+
