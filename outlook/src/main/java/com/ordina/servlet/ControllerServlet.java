@@ -1,6 +1,6 @@
 package com.ordina.servlet;
 
-import com.ordina.email.JsonAddress;
+
 import com.ordina.email.SaveEmailAndAttachments;
 import com.ordina.email.SendEmailWithAttachments;
 import com.ordina.entity.Addresses;
@@ -122,12 +122,7 @@ public class ControllerServlet extends HttpServlet {
 
                 }
                 case ("/exportaddresses"): {
-                    try (PrintWriter out = response.getWriter()) {
-                        JsonAddress obj = new JsonAddress();
-                        JSONObject json = obj.wrapJsonAddresses(addressesf.findAll());
-                        out.println(json);
-                    }
-                    return;
+
                 }
                 case ("/agenda"): {
                     setActions("agenda");
