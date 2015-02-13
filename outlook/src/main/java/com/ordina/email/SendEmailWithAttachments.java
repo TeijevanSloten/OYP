@@ -14,18 +14,18 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-public class SendEmailWithAttachments {    
-    
+public class SendEmailWithAttachments {
+
     private HttpServletRequest request;
-    private String subject;   
-    private List<FileItem> fileItemsList;    
+    private String subject;
+    private List<FileItem> fileItemsList;
     private ArrayList<String> attachmentNames = new ArrayList<>();
     private String message = "";
     private String to = "";
     private String cc = "";
     private String bcc = "";
     private Email email = null;
-    
+
     @EJB
     private EmailFacade ef;
     @EJB
@@ -39,18 +39,26 @@ public class SendEmailWithAttachments {
 
     private void sendEmail() throws ServletException, Exception {
         SendEmail se = new SendEmail();
+        checkIfRequestIsMultipartContent();
+        createFileItemsList();
+        loopThroughList();
+        doIfReply();
+        se.sendMessage(to, cc, bcc, message, attachmentNames.toArray(new String[attachmentNames.size()]), subject);
+    }
+
+    private void checkIfRequestIsMultipartContent() throws ServletException {
         if (!ServletFileUpload.isMultipartContent(request)) {
             throw new ServletException("Content type is not multipart/form-data");
         }
-        createFileItemsList();
-        loopThroughList();
+    }
+
+    private void doIfReply() {
         if (email != null) {
             message += "\nOriginal message:\n" + email.getContent();
             if (to.equals("")) {
                 to = email.getFromemail();
             }
         }
-        se.sendMessage(to, cc, null, message, attachmentNames.toArray(new String[attachmentNames.size()]), subject);
     }
 
     private void createFileItemsList() throws FileUploadException {
@@ -76,23 +84,17 @@ public class SendEmailWithAttachments {
         String fieldvalue = fileItem.getString();
         if (fieldname.equals("to")) {
             to = fieldvalue;
-        }
-        else if (fieldname.equals("CC")) {
+        } else if (fieldname.equals("CC")) {
             cc = fieldvalue;
-        }
-        else if (fieldname.equals("BCC")) {
+        } else if (fieldname.equals("BCC")) {
             bcc = fieldvalue;
-        }
-        else if (fieldname.equals("message")) {
+        } else if (fieldname.equals("message")) {
             message = fieldvalue;
-        }
-        else if (fieldname.equals("subject")) {
+        } else if (fieldname.equals("subject")) {
             subject += fieldvalue;
-        }
-        else if (fieldname.equals("messageid")) {
+        } else if (fieldname.equals("messageid")) {
             email = ef.findMessageId(Integer.parseInt(fieldvalue)).get(0);
-        }             
-       
+        }
     }
     
     private void seperateAttachments(FileItem fileItem) throws Exception {
