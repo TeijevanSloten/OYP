@@ -1,5 +1,6 @@
 package com.ordina.email;
 
+import com.ordina.utillity.SMV;
 import java.util.ArrayList;
 import javax.mail.NoSuchProviderException;
 import java.util.logging.Level;
