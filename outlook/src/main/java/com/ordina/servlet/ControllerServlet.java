@@ -1,5 +1,6 @@
 package com.ordina.servlet;
 
+import com.ordina.email.JsonAddress;
 import com.ordina.email.SaveEmailAndAttachments;
 import com.ordina.email.SendEmail;
 import com.ordina.entity.Addresses;
@@ -10,7 +11,9 @@ import com.ordina.session.EmailFacade;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 @WebServlet(name = "ControllerServlet", urlPatterns = {
     "/sendemail",
@@ -142,9 +147,13 @@ public class ControllerServlet extends HttpServlet {
                 }
                 case ("/exportaddresses"): {
                     try (PrintWriter out = response.getWriter()) {
-                      // JsonObject obj = new JsonObject();
-                               
-                               out.println(wrapJsonAddresses(addressesf.findAll()));
+                       JsonAddress obj = new JsonAddress();
+                       
+                       JSONObject json = obj.wrapJsonAddresses(addressesf.findAll());
+                       
+                      out.println(json);
+                       
+                       
                     }
                     return;
                 }
@@ -241,13 +250,5 @@ public class ControllerServlet extends HttpServlet {
         }
         se.sendMessage(to, cc, bcc, message, attachmentNames.toArray(new String[attachmentNames.size()]), subject);
     }
-
-    public static String wrapJsonAddresses(List<Addresses> addresses) {
-        String json = "{\"addresses\":[\n";
-        for (Addresses address : addresses) {
-            json += "\t{\"fullname\":\"" + address.getName() + "\", \"email\":\"" + address.getEmail() + "\"},\n";
-        }
-        json = json.substring(0, json.length() - 2) + "\n]";
-        return json;
-    }
+    
 }
