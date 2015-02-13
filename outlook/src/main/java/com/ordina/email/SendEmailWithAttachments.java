@@ -14,16 +14,16 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-public class SendEmailWithAttachments {
-
+public class SendEmailWithAttachments {    
+    
     private HttpServletRequest request;
-    private String subject;
-    private File filesDir;
-    private List<FileItem> fileItemsList;
+    private String subject;   
+    private List<FileItem> fileItemsList;    
     private ArrayList<String> attachmentNames = new ArrayList<>();
     private String message = "";
-    private String to = "teije.van.sloten@ordina.nl";
+    private String to = "";
     private String cc = "";
+    private String bcc = "";
     private Email email = null;
     
     @EJB
@@ -42,7 +42,8 @@ public class SendEmailWithAttachments {
         if (!ServletFileUpload.isMultipartContent(request)) {
             throw new ServletException("Content type is not multipart/form-data");
         }
-
+        createFileItemsList();
+        loopThroughList();
         if (email != null) {
             message += "\nOriginal message:\n" + email.getContent();
             if (to.equals("")) {
@@ -54,7 +55,7 @@ public class SendEmailWithAttachments {
 
     private void createFileItemsList() throws FileUploadException {
         DiskFileItemFactory fileFactory = new DiskFileItemFactory();
-        filesDir = new File("D:\\projecten\\Attachments\\temp\\");
+        File filesDir = new File("D:\\projecten\\Attachments\\temp\\");
         fileFactory.setRepository(filesDir);
         ServletFileUpload uploader = new ServletFileUpload(fileFactory);
         fileItemsList = uploader.parseRequest(request);
@@ -75,20 +76,34 @@ public class SendEmailWithAttachments {
         String fieldvalue = fileItem.getString();
         if (fieldname.equals("to")) {
             to = fieldvalue;
-        } else if (fieldname.equals("message")) {
-            message = fieldvalue;
-        } else if (fieldname.equals("subject")) {
-            subject += fieldvalue;
-        } else if (fieldname.equals("messageid")) {
-            email = ef.findMessageId(Integer.parseInt(fieldvalue)).get(0);
         }
+        else if (fieldname.equals("CC")) {
+            cc = fieldvalue;
+        }
+        else if (fieldname.equals("BCC")) {
+            bcc = fieldvalue;
+        }
+        else if (fieldname.equals("message")) {
+            message = fieldvalue;
+        }
+        else if (fieldname.equals("subject")) {
+            subject += fieldvalue;
+        }
+        else if (fieldname.equals("messageid")) {
+            email = ef.findMessageId(Integer.parseInt(fieldvalue)).get(0);
+        }             
+       
     }
-
+    
+    
     private void seperateAttachments(FileItem fileItem) throws Exception {
         if (!fileItem.getName().equals("")) {
-            File file = new File("" + File.separator + fileItem.getName());
+            File file = new File("D:/projecten/Attachments/temp" + File.separator + fileItem.getName());
             fileItem.write(file);
-            attachmentNames.add("" + File.separator + fileItem.getName());
+            attachmentNames.add("D:/projecten/Attachments/temp" + File.separator + fileItem.getName());
         }
     }
+       
+
+    
 }
