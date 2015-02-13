@@ -1,6 +1,5 @@
 package com.ordina.servlet;
-
-
+import com.ordina.email.JsonWrapper;
 import com.ordina.email.SaveEmailAndAttachments;
 import com.ordina.email.SendEmailWithAttachments;
 import com.ordina.entity.Addresses;
@@ -17,7 +16,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.json.JSONObject;
 
 @WebServlet(name = "ControllerServlet", urlPatterns = {
     "/sendemail",
@@ -63,8 +61,7 @@ public class ControllerServlet extends HttpServlet {
                     return;
                 }
                 case ("/showmail"): {
-                    showMailListAndSpecificEmailIfRequested(request);
-
+                    setEmailContext(request);
                     break;
                 }
                 case ("/send"): {
@@ -122,7 +119,10 @@ public class ControllerServlet extends HttpServlet {
 
                 }
                 case ("/exportaddresses"): {
-
+                    try (PrintWriter out = response.getWriter()) {
+                        out.println(JsonWrapper.wrapJsonAddresses(addressesf.findAll()));
+                    }
+                    return;
                 }
                 case ("/agenda"): {
                     setActions("agenda");
@@ -138,7 +138,7 @@ public class ControllerServlet extends HttpServlet {
         }
     }
 
-    private void showMailListAndSpecificEmailIfRequested(HttpServletRequest request) {
+    private void setEmailContext(HttpServletRequest request) {
         if (request.getParameter("id") != null) {
             setActions("viewemail");
             getServletContext().setAttribute("mail", ef.findMessageId(
@@ -158,11 +158,9 @@ public class ControllerServlet extends HttpServlet {
         addressesf.create(address);
     }
     
-        private void setActions(String option) {
+    private void setActions(String option) {
         getServletContext().setAttribute("actions", option);
     }
-
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -189,4 +187,3 @@ public class ControllerServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 }
-

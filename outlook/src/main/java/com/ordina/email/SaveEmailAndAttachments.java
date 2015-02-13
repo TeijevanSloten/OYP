@@ -18,9 +18,9 @@ import javax.mail.internet.MimeBodyPart;
 
 public class SaveEmailAndAttachments {
 
-    EmailFacade ef;
-    AttachmentsFacade af;
-    ArrayList<Message> messages;
+    private EmailFacade ef;
+    private AttachmentsFacade af;
+    private ArrayList<Message> messages;
 
     public SaveEmailAndAttachments(EmailFacade ef, AttachmentsFacade af) {
         this.ef = ef;
@@ -71,7 +71,6 @@ public class SaveEmailAndAttachments {
         } else {
             s = message.getContent().toString();
         }
-        
         return s;
     }
 

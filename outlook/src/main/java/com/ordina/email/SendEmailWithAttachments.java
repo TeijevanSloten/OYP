@@ -1,7 +1,6 @@
 package com.ordina.email;
 
 import com.ordina.entity.Email;
-import com.ordina.session.AttachmentsFacade;
 import com.ordina.session.EmailFacade;
 import java.io.File;
 import java.util.ArrayList;
@@ -28,8 +27,6 @@ public class SendEmailWithAttachments {
 
     @EJB
     private EmailFacade ef;
-    @EJB
-    private AttachmentsFacade af;
 
     public SendEmailWithAttachments(HttpServletRequest request, String subject) throws Exception {
         this.request = request;
