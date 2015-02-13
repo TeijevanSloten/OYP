@@ -10,7 +10,6 @@
         <link rel="icon" href="${initParam.imgPath}OLFav.ico" type="image/x-icon">
         <link rel="stylesheet" href="${initParam.cssPath}css/bootstrap.min.css">
         <link rel="stylesheet" href="${initParam.jsPath}bootstrap-calendar-master/css/calendar.css">
-        
         <title>Oyp.com - Pipo de Cloun</title>
     </head>
     <body>

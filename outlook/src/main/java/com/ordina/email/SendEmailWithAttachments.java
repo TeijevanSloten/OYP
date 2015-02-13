@@ -95,9 +95,8 @@ public class SendEmailWithAttachments {
         } else if (fieldname.equals("messageid")) {
             email = ef.findMessageId(Integer.parseInt(fieldvalue)).get(0);
         }
-
     }
-
+    
     private void seperateAttachments(FileItem fileItem) throws Exception {
         if (!fileItem.getName().equals("")) {
             File file = new File("D:/projecten/Attachments/temp" + File.separator + fileItem.getName());
@@ -105,5 +104,4 @@ public class SendEmailWithAttachments {
             attachmentNames.add("D:/projecten/Attachments/temp" + File.separator + fileItem.getName());
         }
     }
-
 }
