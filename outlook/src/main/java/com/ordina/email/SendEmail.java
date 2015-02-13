@@ -1,5 +1,6 @@
 package com.ordina.email;
 
+import com.ordina.utillity.SMV;
 import com.ordina.entity.Email;
 import java.io.IOException;
 import java.util.Date;

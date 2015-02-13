@@ -1,4 +1,4 @@
-package com.ordina.email;
+package com.ordina.utillity;
 
 import com.ordina.entity.Addresses;
 import java.util.List;

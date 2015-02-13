@@ -1,4 +1,4 @@
-package com.ordina.email;
+package com.ordina.utillity;
 
 import java.util.Properties;
 import javax.mail.PasswordAuthentication;

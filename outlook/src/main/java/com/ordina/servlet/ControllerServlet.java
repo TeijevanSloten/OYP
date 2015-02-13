@@ -1,5 +1,5 @@
 package com.ordina.servlet;
-import com.ordina.email.JsonWrapper;
+import com.ordina.utillity.JsonWrapper;
 import com.ordina.email.SaveEmailAndAttachments;
 import com.ordina.email.SendEmailWithAttachments;
 import com.ordina.entity.Addresses;
