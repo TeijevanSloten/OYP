@@ -5,7 +5,7 @@
         <h3>Compose email:</h3>
         <div class="form-group">
             <label>To:</label><br>
-            <select class="select-to" style="width: 100%;" name="to" multiple>
+            <select class="select-to email-select" name="to" multiple>
                 <c:forEach var="address" items="${addresses}">
                     <c:if test="${address.getName() != ''}">
                     <option value="${address.getEmail()}">${address.getName()}</option>
@@ -18,7 +18,7 @@
         </div>
         <div class="form-group">
             <label>CC:</label><br>
-            <select class="select-cc" style="width: 100%;" name="CC" multiple>
+            <select class="select-cc email-select" name="CC" multiple>
                 <c:forEach var="address" items="${addresses}">
                     <c:if test="${address.getName() != ''}">
                     <option value="${address.getEmail()}">${address.getName()}</option>
@@ -31,7 +31,7 @@
         </div>
         <div class="form-group">
             <label>BCC:</label><br>
-            <select class="select-bcc" style="width: 100%;" name="BCC" multiple>
+            <select class="select-bcc email-select" name="BCC" multiple>
                 <c:forEach var="address" items="${addresses}">
                     <c:if test="${address.getName() != ''}">
                     <option value="${address.getEmail()}">${address.getName()}</option>
@@ -45,47 +45,22 @@
     </div>
     <div class="col-md-9">
         <div class="form-group">
-            <input class="" placeholder="Add a Subject" type="text" name="subject" style="font-size: 24px;border:0;border-bottom: 1px solid #ccc;width: 100%; margin-top: 15px;"><br>
+            <input class="subject" placeholder="Add a Subject" type="text" name="subject">
+            <br>
         </div>
         <div id="attachmentbutton"></div>
         <div class="form-group">
-            <textarea placeholder="Add a message here."  id="textareaInput" class="form-control" style="" rows="10" name="message"></textarea> <br>
+            <textarea placeholder="Add a message here."  id="textareaInput" class="form-control" style="" rows="10" name="message"></textarea>
+            <br>
         </div> 
-        <label>From: </label> <c:out value="${mail.getFromemail()}"></c:out> <br>
-        <label>Subject:</label>  <c:out value="${mail.getSubject()}"></c:out><br>
-        <label>Message:</label><br>
+        <label>From: </label> <c:out value="${mail.getFromemail()}"></c:out>
+        <br>
+        <label>Subject:</label>  <c:out value="${mail.getSubject()}"></c:out>
+        <br>
+        <label>Message:</label>
+        <br>
         <pre>${mail.getContent()}</pre>
     </div>
     <input type="hidden" name="messageid" value="${mail.getMessageid()}">
 </form>
-
-<script>
-    var attachmentsint = 2;
-    function myFunction() {
-        $("#attachmentbutton").before('<input type="file" name="attachment['+attachmentsint+']"><br>');
-        attachmentsint++;
-    }
-    $(document).ready(function () {
-        $(".select-to").select2({
-            minimumInputLength: 1,
-            tags: true,
-            placeholder: "To",
-            tokenSeparators: [',', ' ']
-        });
-        $(".select-cc").select2({
-            minimumInputLength: 1,
-            tags: true,
-            placeholder: "CC",
-            tokenSeparators: [',', ' ']
-        });
-        $(".select-bcc").select2({
-            minimumInputLength: 1,
-            tags: true,
-            placeholder: "BCC",
-            tokenSeparators: [',', ' ']
-        });
-        
-            CKEDITOR.config.height = 600;    
-            CKEDITOR.replace('textareaInput');
-    });
-</script>
+<script src="${initParam.jsPath}composemail.js"></script>
