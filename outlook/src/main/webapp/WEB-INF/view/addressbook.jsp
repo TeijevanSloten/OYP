@@ -21,36 +21,30 @@
 <div class="col-md-9">
     <h2>&nbsp;</h2>
     <table class="table table-hover">
-      <thead>
-        <tr>
-          <th>Full name</th>
-          <th>Email</th>
-        </tr>
-      </thead>
-      <tbody>
-        
-             <c:forEach var="address" items="${addresses}">
+        <thead>
+            <tr>
+                <th>Full name</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            <c:forEach var="address" items="${addresses}">
                 <tr>
                     <th scope="row">${address.getName()}</th>
                     <td>${address.getEmail()}</td>
                     <td>
                         <a  class="btn btn-danger" href="${pageContext.request.contextPath}/deleteaddress?id=${address.getId()}" onclick="return removeAddress()"/>     
-                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-             </a>
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                        </a>
                     </td>
                 </tr>
-             </c:forEach>
-      </tbody>
+            </c:forEach>
+        </tbody>
     </table>
 </div>
-
-
 <script>
-    function removeAddress(){
+    function removeAddress() {
         return confirm("Weet u zeker dat u dit adres wilt verwijderen?");
-        
     }
-    
-    
 </script>
 

@@ -4,7 +4,7 @@
 <div id="fade"></div>
 </div>
 <script type="text/javascript" src="${initParam.jsPath}bootstrap.js"></script>
-<script type="text/javascript" src="${initParam.jsPath}spinwiel.js"></script>
+<script type="text/javascript" src="${initParam.jsPath}spin.min.js"></script>
 <script>
     $(document).ready(function () {
         var opts = {
@@ -25,16 +25,12 @@
             left: 150 // Left position relative to parent in px
         };
 
-
         $('#refresh').on('click', function () {
-
             $('#spinwielWrap').fadeIn();
             $('#fade').css({'filter': 'alpha(opacity=80)'}).fadeIn();
             var target = document.getElementById('spinwiel');
             var spinner = new Spinner(opts).spin(target);
         });
-
-
     });
 </script>
 <script type="text/javascript" src="${initParam.jsPath}ckeditor/ckeditor.js" ></script>

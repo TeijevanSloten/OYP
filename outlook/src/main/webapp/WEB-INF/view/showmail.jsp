@@ -1,61 +1,27 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<style>
-    .email-ul {
-        border: 0;
-        border-top: 1px solid #bbb;
-        position: relative; 
-        left: -15px;
-        height: 800px !important;
-        overflow-y: scroll;
-    }
-    .email-list {
-        border: 0;
-    }
-    .email-list:hover {
-        background: rgb(207, 207, 207);
-        border-radius: 0;
-    }
-    .title {
-
-        padding-bottom: 5px;
-        margin-right: 15px;
-    }
-    .mail-header {
-        margin-bottom: 10px;
-    }
-    
-    #mail-text {
-        border: 1px solid #ccc;
-        background: white;
-        overflow: auto;
-        min-height: 100px !important
-    }
-    
-    
-</style>
 <div class="row">
     <div class="col-md-3">
-        <h2 class="title">Messages:</h2>
+        <h2>Messages:</h2>
         <ul class="list-group email-ul">  
             <c:forEach var="email" items="${messages}">
                 <a href="showmail?id=${email.getMessageid()}" style="color: black; text-decoration: none;">
                     <li class="list-group-item email-list">
                         <span class="pull-right" >${email.getSimpleDate()}</span>
-                        &nbsp; <c:out value="${email.getSubject()}"></c:out>
-                    </li>
-                </a>
+                        <c:out value="${email.getSubject()}"></c:out>&nbsp;
+                        </li>
+                    </a>
             </c:forEach>
         </ul>
     </div>
 
-    <div class="col-md-9" style="padding-left: 0;">
+    <div class="col-md-9">
         <c:if test="${mail != null}">
-            <h2 class="title"> 
+            <h2> 
                 <c:out value="${mail.getSubject()}"></c:out>
-                 <c:if test="${mail.getSubject() == null}">
-                     &nbsp;
-                 </c:if>
+                <c:if test="${mail.getSubject() == null}">
+                    &nbsp;
+                </c:if>
             </h2>
             <div class="row mail-header">
                 <div class="col-md-1">
@@ -63,21 +29,21 @@
                 </div>
                 <div class="col-md-11">
                     <c:out value="${mail.getFromemail()}"></c:out>
+                    </div>
                 </div>
-            </div>
-            <div class="row mail-header">
-                <div class="col-md-1">
-                    <span class="badge">Subject: </span> 
-                </div>
-                <div class="col-md-11">
+                <div class="row mail-header">
+                    <div class="col-md-1">
+                        <span class="badge">Subject: </span> 
+                    </div>
+                    <div class="col-md-11">
                     <c:out value="${mail.getSubject()}"></c:out>
+                    </div>
                 </div>
-            </div>
-            <div class="row mail-header">
-                <div class="col-md-1">
-                    <span class="badge">Sent: </span> 
-                </div>
-                <div class="col-md-11">
+                <div class="row mail-header">
+                    <div class="col-md-1">
+                        <span class="badge">Sent: </span> 
+                    </div>
+                    <div class="col-md-11">
                     ${mail.getSimpleDate()}
                 </div>
             </div>
@@ -94,10 +60,7 @@
                     </div>
                 </div>
             </c:if>
-                
-                
-             <pre id="mail-text" >${mail.getContent()}</pre> 
-
+            <pre id="mail-text" >${mail.getContent()}</pre> 
         </c:if>
         <c:if test="${mail == null}">
             <h2>
