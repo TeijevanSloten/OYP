@@ -2,7 +2,7 @@ var attachmentsint = 1;
 function myFunction() {
     $("#attachmentbutton").before(
             '<span style="display: inline; width: 300px;">' +
-            '<input type="file" name="attachment[' + attachmentsint + ']"><div>remove</div></span><br>');
+            '<input type="file" name="attachment[' + attachmentsint + ']"></span><br>');
     attachmentsint++;
 }
 $(document).ready(function () {
