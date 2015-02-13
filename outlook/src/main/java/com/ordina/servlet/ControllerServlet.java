@@ -99,7 +99,7 @@ public class ControllerServlet extends HttpServlet {
                 case ("/forward"): {
                     setActions("compose");
                     getServletContext().setAttribute("addresses",
-                            addressesf.findAll());
+                            addressesf.findByName());
                     getServletContext().setAttribute("mail",
                             ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
                     break;
@@ -107,7 +107,7 @@ public class ControllerServlet extends HttpServlet {
                 case ("/reply"): {
                     setActions("compose");
                     getServletContext().setAttribute("addresses",
-                            addressesf.findAll());
+                            addressesf.findByName());
                     getServletContext().setAttribute("mail",
                             ef.findMessageId(Integer.parseInt(request.getParameter("id"))).get(0));
                     break;
@@ -115,13 +115,13 @@ public class ControllerServlet extends HttpServlet {
                 case ("/sendemail"): {
                     setActions("compose");
                     getServletContext().setAttribute("addresses",
-                            addressesf.findAll());
+                            addressesf.findByName());
                     break;
                 }
                 case ("/addressbook"): {
                     setActions("addresses");
                     getServletContext().setAttribute("addresses",
-                            addressesf.findAll());
+                            addressesf.findByName());
 
                     break;
                 }
