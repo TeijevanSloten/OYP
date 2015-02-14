@@ -65,17 +65,17 @@ public class ControllerServlet extends HttpServlet {
                     break;
                 }
                 case ("/send"): {
-                    new SendEmailWithAttachments(request, "");
+                    new SendEmailWithAttachments(request, "", ef);
                     response.sendRedirect("showmail");
                     return;
                 }
                 case ("/sendreply"): {
-                    new SendEmailWithAttachments(request, "RE: ");
+                    new SendEmailWithAttachments(request, "RE: ", ef);
                     response.sendRedirect("showmail");
                     return;
                 }
                 case ("/sendforward"): {
-                    new SendEmailWithAttachments(request, "FW: ");
+                    new SendEmailWithAttachments(request, "FW: ", ef);
                     response.sendRedirect("showmail");
                     return;
                 }

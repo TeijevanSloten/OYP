@@ -48,7 +48,7 @@ public class SaveEmailAndAttachments {
         try{
             email.setContent(getStringContentEmail(message));
         }catch (MessagingException e){
-            System.out.println("Exception in get Strign ContentEmail");
+            e.printStackTrace();
         }
         email.setFromemail(message.getFrom()[0].toString());
         email.setDate(message.getReceivedDate());

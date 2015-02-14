@@ -4,12 +4,9 @@
     <head>
         <script type="text/javascript" src="${initParam.jsPath}jquery.min.js"></script>
         <link rel="stylesheet" type="text/css" href="${initParam.cssPath}bootstrap.css">
-        <link rel="stylesheet" type="text/css" href="${initParam.cssPath}bootstrap.css">
         <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-beta.3/css/select2.min.css" />
         <link rel="stylesheet" type="text/css" href="${initParam.cssPath}theme.css">
         <link rel="icon" href="${initParam.imgPath}OLFav.ico" type="image/x-icon">
-        <link rel="stylesheet" href="${initParam.cssPath}css/bootstrap.min.css">
-        <link rel="stylesheet" href="${initParam.jsPath}bootstrap-calendar-master/css/calendar.css">
         <title>Oyp.com - Pipo de Cloun</title>
     </head>
     <body>
@@ -91,7 +88,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="exportaddresses" class="menuitem" onclick="myFunction()">
+                                <a href="#" class="menuitem" onclick="myFunction()">
                                     <span class="glyphicon glyphicon-import" aria-hidden="true" ></span>
                                     Invite
                                 </a>

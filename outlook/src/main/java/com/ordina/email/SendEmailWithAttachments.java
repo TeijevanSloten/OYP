@@ -24,13 +24,12 @@ public class SendEmailWithAttachments {
     private String cc = "";
     private String bcc = "";
     private Email email = null;
-
-    @EJB
     private EmailFacade ef;
 
-    public SendEmailWithAttachments(HttpServletRequest request, String subject) throws Exception {
+    public SendEmailWithAttachments(HttpServletRequest request, String subject, EmailFacade ef) throws Exception {
         this.request = request;
         this.subject = subject;
+        this.ef = ef;
         sendEmail();
     }
 
